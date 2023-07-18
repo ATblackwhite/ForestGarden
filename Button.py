@@ -14,6 +14,8 @@ class Button:
         self.rect.center = self.screen_rect.center
         #按钮标签只需创建一次
         self.prep_msg(msg)
+        #判断按钮是否继续工作
+        self.available = True
 
     def prep_msg(self, msg):
         #将msg渲染成图像，并使其在按钮上居中
@@ -33,3 +35,4 @@ class Button:
             #重置游戏统计信息
             game.game_state = 2
             print("游戏开始")
+            self.available = False
