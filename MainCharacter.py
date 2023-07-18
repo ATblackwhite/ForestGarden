@@ -20,6 +20,7 @@ class MainCharacter:
     frame = 0
     animate = []
 
+    #行走动画
     def move_animate(self, direction):
         self.screen.fill((255, 255, 255))
         if not (direction == self.direction):
@@ -28,6 +29,7 @@ class MainCharacter:
         self.screen.blit(self.animate[direction][self.frame], (self.posx, self.posy))
         self.frame = (self.frame + 1) % 3
 
+    #坐标变化
     def move(self, dx, dy):
         self.posx += dx*(self.width/4)
         self.posy += dy*(self.height/4)
@@ -40,7 +42,7 @@ class MainCharacter:
         if dy == -1:
             direction = 0
         self.move_animate(direction)
-
+    #坐标变化（另一种输入）
     def move_by_dire(self, direction):
         if direction == 0:
             self.move(0, -1)
@@ -51,6 +53,7 @@ class MainCharacter:
         if direction == 3:
             self.move(1, 0)
 
+    #前置加载
     def loadAnimation(self):
 
         front = []
