@@ -17,6 +17,7 @@ class MainCharacter:
     posx = (map_width - width) / 2
     posy = (map_height - height) / 2
 
+    movement = []
     direction = 0
     frame = 0
     animate = []
