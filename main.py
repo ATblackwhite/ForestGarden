@@ -53,7 +53,8 @@ class FroestGarden:
                 pygame.quit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                self.play_button.check_button(self, mouse_pos)
+                if play_button.available:
+                    self.play_button.check_button(self, mouse_pos)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     movement.append(2)
