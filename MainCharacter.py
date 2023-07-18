@@ -7,6 +7,7 @@ class MainCharacter:
         self.map_width = map_width
         self.map_height = map_height
         self.screen = screen
+        self.loadAnimation()
 
     animation = []
     map_width = 640
@@ -42,6 +43,7 @@ class MainCharacter:
         if dy == -1:
             direction = 0
         self.move_animate(direction)
+
     #坐标变化（另一种输入）
     def move_by_dire(self, direction):
         if direction == 0:
