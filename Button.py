@@ -2,6 +2,7 @@ import pygame
 class Button:
     def __init__(self, game, msg):
         # 初始化按钮属性
+        self.game = game
         self.screen = game.screen
         self.screen_rect = game.screen.get_rect()
         self.width = 200
@@ -36,3 +37,5 @@ class Button:
             game.game_state = 2
             print("游戏开始")
             self.available = False
+            self.screen.fill((255, 255, 255))
+            self.game.player.screen.blit(self.game.player.animate[0][self.game.player.frame], (self.game.player.posx, self.game.player.posy))
