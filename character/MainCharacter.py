@@ -1,5 +1,5 @@
 import pygame
-from TextWrapTool import displayText
+from character.TextWrapTool import displayText
 
 class MainCharacter:
 
