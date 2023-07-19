@@ -24,6 +24,9 @@ class FroestGarden:
         self.game_state = 1
         # 添加人物
         self.player = MainCharacter(self.screen)
+        # 添加人物背包
+        self.player.ownBackpack(Backpack(self.player))
+        self.player.gainItem(Item.Item(1))
 
     def run_game(self):
         # 游戏循环，保证游戏开始运行时不会终止
@@ -54,10 +57,30 @@ class FroestGarden:
             if event.type == pygame.QUIT:
                 self.game_state = 0
                 pygame.quit()
+
+            # 打开背包后的判定
+            if self.player.backpack.opened:
+                self.player.openBackpack()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                        self.player.backpack.moveChose(-1, 0)
+                    elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                        self.player.backpack.moveChose(1, 0)
+                    elif event.key == pygame.K_UP or event.key == pygame.K_w:
+                        self.player.backpack.moveChose(0, -1)
+                    elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                        self.player.backpack.moveChose(0, 1)
+                    elif event.key == pygame.K_TAB:
+                        self.player.backpack.opened = False
+                        self.player.move(0, 0)
+
+            # 鼠标判定
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if self.play_button.available:
                     self.play_button.check_button(self, mouse_pos)
+                    
+            # 键盘按键判定
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     movement.append(2)
@@ -71,6 +94,8 @@ class FroestGarden:
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     movement.append(1)
                     self.player.move(0, 1)
+                elif event.key == pygame.K_TAB:
+                    self.player.openBackpack()
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     movement.remove(2)
