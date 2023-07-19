@@ -1,6 +1,7 @@
 import pygame
-from Button import Button
-from MainCharacter import MainCharacter
+from UI.button.PlayButton import PlayButton
+from character.MainCharacter import MainCharacter
+from settings import Settings
 
 movement = []
 class FroestGarden:
@@ -8,19 +9,21 @@ class FroestGarden:
     def __init__(self):
         # 初始化游戏
         pygame.init()
-        self.screen = pygame.display.set_mode((683, 384))
+        # 读取游戏设置
+        self.settings = Settings()
+        self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         # 设置游戏标题
         pygame.display.set_caption("Forest Garden")
         # 设置游戏的背景
-        self.back_ground = pygame.transform.scale(pygame.image.load(r"sources\UI\background\background.png"), (683, 384))
+        self.back_ground = pygame.transform.scale(pygame.image.load(r"sources\UI\background\background.png"), (self.settings.screen_width, self.settings.screen_height))
         # 按钮设置
-        self.play_button = Button(self, "play")
+        self.play_button = PlayButton(self)
         # 添加系统时钟
         self.clock = pygame.time.Clock()
         # 游戏状态 1为界面状态，2为游戏状态
         self.game_state = 1
         # 添加人物
-        self.player = MainCharacter(683, 384, self.screen)
+        self.player = MainCharacter(self.screen)
 
     def run_game(self):
         # 游戏循环，保证游戏开始运行时不会终止
