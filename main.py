@@ -1,6 +1,7 @@
 import pygame
 from UI.button.PlayButton import PlayButton
-from character.MainCharacter import MainCharacter
+from character.MainCharacter import Backpack
+from character.Item import Item
 from settings import Settings
 
 movement = []
@@ -23,10 +24,10 @@ class FroestGarden:
         # 游戏状态 1为界面状态，2为游戏状态
         self.game_state = 1
         # 添加人物
-        self.player = MainCharacter(self.screen)
+        self.player = MainCharacter(self.settings.screen_width, self.settings.screen_height, self.screen)
         # 添加人物背包
         self.player.ownBackpack(Backpack(self.player))
-        self.player.gainItem(Item.Item(1))
+        self.player.gainItem(Item(1))
 
     def run_game(self):
         # 游戏循环，保证游戏开始运行时不会终止
