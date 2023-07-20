@@ -1,4 +1,3 @@
-import os
 import sys
 sys.path.append('..')
 from sources.Item import ID_Item_Table
