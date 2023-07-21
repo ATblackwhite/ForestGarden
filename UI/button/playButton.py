@@ -1,4 +1,4 @@
-from UI.button.Button import Button
+from UI.button.button import Button
 
 class PlayButton(Button):
     def __init__(self, game):
