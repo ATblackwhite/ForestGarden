@@ -139,7 +139,6 @@ class FroestGarden:
                 #New 物品栏切换判断
                 elif event.key == pygame.K_1:
                     self.player.equipItem(0)
-                    print(self.player.equiped_item)
                 elif event.key == pygame.K_2:
                     self.player.equipItem(1)
                 elif event.key == pygame.K_3:
