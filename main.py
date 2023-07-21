@@ -1,8 +1,9 @@
-import pygame
 from UI.interface.mainMenu import MainMenu
 from character.MainCharacter import *
 from character.Item import Item
 from settings import Settings
+from camera.cameraGroup import CameraGroup
+from generic import Generic
 
 movement = []
 need_moveWithMouse = False
@@ -14,7 +15,7 @@ class FroestGarden:
         pygame.init()
         # 读取游戏设置
         self.settings = Settings()
-        self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
+        self.screen = pygame.display.set_mode((self.settings.SCREEN_WIDTH, self.settings.SCREEN_HEIGHT))
         # 设置游戏标题
         pygame.display.set_caption("Forest Garden")
         # 载入游戏主界面
@@ -24,12 +25,25 @@ class FroestGarden:
         # 游戏状态 1为界面状态，2为游戏状态
         self.game_state = 1
         # 添加人物
-        self.player = MainCharacter(self.settings.screen_width, self.settings.screen_height, self.screen)
+        self.player = MainCharacter(self.settings.SCREEN_WIDTH, self.settings.SCREEN_HEIGHT, self.screen)
         # New，将这部分代码放入player的初始化函数中
         # 添加测试物品
         self.player.gainItem(Item(1))
         self.player.gainItem(Item(2))
+        # New，精灵组
+        self.all_sprites = CameraGroup()
+        # New，增加地图
+        self.setup()
 
+
+
+    def setup(self):
+        # 生成地图（简单背景）
+        Generic(
+            pos=(0, 0),
+            surf=pygame.image.load('sources/UI/world/ground.png').convert_alpha(),
+            groups=self.all_sprites
+        )
 
     def run_game(self):
         # 游戏循环，保证游戏开始运行时不会终止
@@ -48,23 +62,32 @@ class FroestGarden:
             self.main_menu.draw_menu()
             # 让最近绘制的屏幕可见
         elif self.game_state == 2:
-            pass
+            # 渲染精灵组中所有的精灵
+            self.all_sprites.custom_draw()
+            self.all_sprites.update(10)
+            # 低层环境人物绘制
+            global need_moveWithMouse
+            global movement
+            if len(movement) != 0:
+                self.player.move_by_dire(movement[len(movement) - 1])
+                self.player.display(1)
+            else:
+                self.player.display(0)
+            # 最高层UI绘制
+            if self.game_state == 2:
+                if self.player.backpack.opened:
+                    self.player.openBackpack()
+                self.player.inventory.display()
+                if need_moveWithMouse:
+                    self.player.backpack.moveWithMouse(self.player.backpack.item_chose, self.mouse_pos[0],
+                                                       self.mouse_pos[1])
+
         pygame.display.flip()
 
     def check_event(self):
 
-        # 低层环境人物绘制
         global need_moveWithMouse
         global movement
-        # New，加入判断防止报错，这部分可能以后需要转移到update_screen中，不急
-        if self.game_state == 2:
-            self.player.screen.fill((255, 255, 255))
-        if len(movement) != 0:
-            self.player.move_by_dire(movement[len(movement) - 1])
-            self.player.display(1)
-        else:
-            self.player.display(0)
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.game_state = 0
@@ -153,14 +176,7 @@ class FroestGarden:
                     movement.remove(0)
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     movement.remove(1)
-        #最高层UI绘制
-        # New，这部分以后可能需要转移到update_screen中，不急
-        if self.game_state == 2:
-            if self.player.backpack.opened:
-                self.player.openBackpack()
-            self.player.inventory.display()
-            if need_moveWithMouse:
-                self.player.backpack.moveWithMouse(self.player.backpack.item_chose, self.mouse_pos[0], self.mouse_pos[1])
+
 
 if __name__ == '__main__':
     game = FroestGarden()
