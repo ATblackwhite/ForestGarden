@@ -28,14 +28,10 @@ class FroestGarden:
         self.game_state = 1
         # 添加人物
         self.player = MainCharacter(self.settings.screen_width, self.settings.screen_height, self.screen)
-        # 添加人物背包
-        self.player.ownBackpack(Backpack(self.player))
-        self.item_chose = None
-        self.item_switch = None
+        # 添加测试物品
         self.player.gainItem(Item(1))
         self.player.gainItem(Item(2))
-        # 添加人物物品栏
-        self.player.ownInventory(Inventory(self.player))
+
 
     def run_game(self):
         # 游戏循环，保证游戏开始运行时不会终止
@@ -81,28 +77,28 @@ class FroestGarden:
             # 打开背包后的判定
             if self.player.backpack.opened:
                 need_moveWithMouse = False
-                if self.item_chose != None:
+                if self.player.backpack.item_chose != None:
                     self.mouse_pos = pygame.mouse.get_pos()
                     need_moveWithMouse = True
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     self.mouse_pos = pygame.mouse.get_pos()
                     start_space = self.player.backpack.checkMouseChose(self.mouse_pos)
                     if start_space != None:
-                        self.item_chose = start_space.item
+                        self.player.backpack.item_chose = start_space.item
                     else:
-                        self.item_chose = None
+                        self.player.backpack.item_chose = None
 
                 if event.type == pygame.MOUSEBUTTONUP:
                     self.mouse_pos = pygame.mouse.get_pos()
                     end_space = self.player.backpack.checkMouseChose(self.mouse_pos)
                     if end_space != None:
-                        self.item_switch = end_space.item
+                        self.player.backpack.item_switch = end_space.item
                     else:
-                        self.item_switch = None
+                        self.player.backpack.item_switch = None
                         self.player.backpack.display()
-                    self.player.backpack.switchItem(end_space, self.item_chose, self.item_switch)
-                    self.item_chose = None
-                    self.item_switch = None
+                    self.player.backpack.switchItem(end_space, self.player.backpack.item_chose, self.player.backpack.item_switch)
+                    self.player.backpack.item_chose = None
+                    self.player.backpack.item_switch = None
 
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT or event.key == pygame.K_a:
@@ -140,7 +136,7 @@ class FroestGarden:
                 elif event.key == pygame.K_TAB:
                     self.player.openBackpack()
                     movement = []
-                #判断物品栏切换
+                #New 物品栏切换判断
                 elif event.key == pygame.K_1:
                     self.player.equipItem(0)
                     print(self.player.equiped_item)
@@ -152,7 +148,7 @@ class FroestGarden:
                     self.player.equipItem(3)
                 elif event.key == pygame.K_5:
                     self.player.equipItem(4)
-                    
+
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     movement.remove(2)
@@ -167,7 +163,7 @@ class FroestGarden:
             self.player.openBackpack()
         self.player.inventory.display()
         if need_moveWithMouse:
-            self.player.backpack.moveWithMouse(self.item_chose, self.mouse_pos[0], self.mouse_pos[1])
+            self.player.backpack.moveWithMouse(self.player.backpack.item_chose, self.mouse_pos[0], self.mouse_pos[1])
 
 if __name__ == '__main__':
     game = FroestGarden()
