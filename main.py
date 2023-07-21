@@ -140,6 +140,19 @@ class FroestGarden:
                 elif event.key == pygame.K_TAB:
                     self.player.openBackpack()
                     movement = []
+                #判断物品栏切换
+                elif event.key == pygame.K_1:
+                    self.player.equipItem(0)
+                    print(self.player.equiped_item)
+                elif event.key == pygame.K_2:
+                    self.player.equipItem(1)
+                elif event.key == pygame.K_3:
+                    self.player.equipItem(2)
+                elif event.key == pygame.K_4:
+                    self.player.equipItem(3)
+                elif event.key == pygame.K_5:
+                    self.player.equipItem(4)
+                    
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     movement.remove(2)
