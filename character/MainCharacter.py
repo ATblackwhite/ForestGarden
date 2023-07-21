@@ -9,6 +9,8 @@ class MainCharacter:
         self.map_height = map_height
         self.screen = screen
         self.loadAnimation()
+        self.ownBackpack(Backpack(self))
+        self.ownInventory(Inventory(self))
 
     animation = []
     map_width = 640
@@ -23,8 +25,9 @@ class MainCharacter:
     frame = 0
     animate = []
 
-    equiped_num = 0
+    equiped_num = -1
     equiped_item = None
+
 
     # 行走动画
     def move_animate(self, direction):
@@ -131,7 +134,14 @@ class MainCharacter:
         if not space_left:
             print("NO Space left")
 
-#    def equipItem(self, item):
+    def equipItem(self, equip_num):
+        self.inventory.moveChose(equip_num)
+        if equip_num != self.equiped_num:
+            self.equiped_num = equip_num
+            self.equiped_item = self.inventory.hand_list[self.equiped_num].item
+        else:
+            self.equiped_num = -1
+            self.equiped_item = None
 
 
 class Backpack:
@@ -143,6 +153,10 @@ class Backpack:
     space_row = 4
     space_column = 5
     opened = False
+
+    #used in main
+    item_chose = None
+    item_switch = None
 
     choosed_x = 0
     choosed_y = 0
@@ -190,11 +204,14 @@ class Backpack:
             for j in i:
                 if j.ifMouseChose(mouse_pos[0], mouse_pos[1]):
                     return j
+        for i in self.player.inventory.hand_list:
+            if i.ifMouseChose(mouse_pos[0], mouse_pos[1]):
+                return i
 
     def switchItem(self, desti_space, item1=None, item2=None):
         if item1 == None or desti_space == None:
             return
-        if item2 == None:
+        elif item2 == None:
             temp_space = item1.space
             desti_space.pushItem(item1)
             temp_space.item = None
@@ -227,7 +244,7 @@ class BackSpace:
 
     def pushItem(self, item):
         self.item = item
-        item.presentInBackPack(self)
+        item.presentInBackPack(self, True)
         self.occupied = True
 
     def display(self):
@@ -253,7 +270,7 @@ class Inventory(Backpack):
     hand_background = pygame.transform.scale(hand_background, (200, 50))
     hand_list = []
     hand_capacity = 5
-    chosen_ID = 0
+    chosen_ID = -1
 
     def createHandSpace(self):
         for i in range(self.hand_capacity):
@@ -263,6 +280,15 @@ class Inventory(Backpack):
         self.player.screen.blit(self.hand_background, (self.posx, self.posy))
         for i in self.hand_list:
             i.display()
+
+    def moveChose(self, desti):
+        if desti == self.chosen_ID:
+            self.hand_list[self.chosen_ID].choosed = False
+            self.chosen_ID = -1
+        else:
+            self.hand_list[self.chosen_ID].choosed = False
+            self.chosen_ID = desti
+            self.hand_list[self.chosen_ID].choosed = True
 
 
 class HandSpace(BackSpace):
@@ -275,4 +301,17 @@ class HandSpace(BackSpace):
         self.inventory = inventory
         self.posx = self.inventory.posx+15+(5+self.width)*x
         self.posy = self.inventory.posy+7.5
+
+    def pushItem(self, item):
+        self.item = item
+        item.presentInBackPack(self, False)
+        self.occupied = True
+
+    def display(self):
+        if self.choosed:
+            self.backpack.player.screen.blit(self.chosen_img, (self.posx, self.posy))
+        else:
+            self.backpack.player.screen.blit(self.normal_img, (self.posx, self.posy))
+        if self.item != None:
+            self.item.display()
 
