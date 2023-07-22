@@ -8,12 +8,9 @@ from camera.cameraGroup import *
 class MainCharacter(pygame.sprite.Sprite):
 
     animation = []
-    map_width = 680
-    map_height = 380
     width = 31
     height = 36
-    posx = (map_width - width) / 2
-    posy = (map_height - height) / 2
+
 
     movement = []
     direction = 0
@@ -39,6 +36,7 @@ class MainCharacter(pygame.sprite.Sprite):
         self.ownInventory(Inventory(self))
         self.loadAnimation()
         self.pos = pos
+        self.posx, self.posy = pos
 
         #New
         if self.item_animating:
@@ -72,6 +70,7 @@ class MainCharacter(pygame.sprite.Sprite):
     def move(self, dx, dy):
         self.posx += dx * (self.width / 4)
         self.posy += dy * (self.height / 4)
+
         if dx == 1:
             self.direction = 3
         if dx == -1:

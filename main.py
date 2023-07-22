@@ -2,7 +2,7 @@ import pygame.sprite
 
 from UI.interface.mainMenu import MainMenu
 from character.MainCharacter import *
-from character.Item import Item
+
 from settings import *
 from camera.cameraGroup import CameraGroup
 from sprites.generic import Generic
@@ -29,34 +29,41 @@ class FroestGarden:
         self.all_sprites = CameraGroup()
         # 碰撞精灵组
         self.collision_sprites = pygame.sprite.Group()
-        # 增加地图
-        self.setup()
         # 游戏状态 1为界面状态，2为游戏状态
         self.game_state = 1
-        # 添加人物
-        self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (640, 380), self.all_sprites)
         # 将这部分代码放入player的初始化函数中
-        # 添加测试物品
-        self.player.gainItem(Item(1))
-        self.player.gainItem(Item(2))
-
-
+        # 增加地图
+        self.setup()
 
 
     def setup(self):
-        tmx_data = load_pygame('map.tmx')
-
-        # 读取地图中的树并创建树的精灵
-        for x, y, surf in tmx_data.get_layer_by_name('tree').tiles():
-            Tree((x * TILE_SIZE, y * TILE_SIZE), surf, [self.all_sprites, self.collision_sprites], LAYERS['ground plant'])
-
-        #
         # 生成地图（简单背景）
         Generic(
             pos=(0, 0),
-            surf=pygame.image.load('sources/UI/world/ground.png').convert_alpha(),
-            groups=self.all_sprites
+            # surf=pygame.image.load('sources/UI/world/ground.png').convert_alpha(),
+            surf=pygame.image.load(r"asset/map.png").convert_alpha(),
+            groups=self.all_sprites,
+            z=LAYERS['ground']
         )
+
+        # 读取地图
+        tmx_data = load_pygame('asset/map.tmx')
+
+        # 读取地图中的树并创建树的精灵
+        for obj in tmx_data.get_layer_by_name('tree'):
+            Tree(pos=(obj.x, obj.y), surf=obj.image, groups=[self.all_sprites, self.collision_sprites], name=obj.name)
+
+        # 边缘空气墙
+        for x, y, surf in tmx_data.get_layer_by_name('collision').tiles():
+            Generic(pos=(x * TILE_SIZE, y * TILE_SIZE), surf=pygame.Surface((TILE_SIZE, TILE_SIZE)), groups=self.collision_sprites)
+        #
+        # 读取地图的开始点并设置人物坐标为此坐标
+        for obj in tmx_data.get_layer_by_name('objects'):
+            if obj.name == 'start':
+                start = obj
+        # 添加人物
+        self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (start.x, start.y), self.all_sprites)
+        # self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (0, 0), self.all_sprites)
 
     def run_game(self):
         # 游戏循环，保证游戏开始运行时不会终止
@@ -79,7 +86,7 @@ class FroestGarden:
         elif self.game_state == 2:
             # 渲染精灵组中所有的精灵
             self.all_sprites.custom_draw(self.player)
-            self.all_sprites.update(10)
+            self.all_sprites.update()
             # 低层环境人物绘制
             global need_moveWithMouse
             global movement
