@@ -17,4 +17,4 @@ class PlayButton(Button):
             print("游戏开始")
             self.available = False
             self.screen.fill((255, 255, 255))
-            game.player.screen.blit(game.player.animate[0][game.player.frame], (game.player.posx, game.player.posy))
+            game.player.screen.blit(game.player.animate[1][1], (game.player.posx, game.player.posy))
