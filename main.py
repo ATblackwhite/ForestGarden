@@ -1,9 +1,13 @@
+import pygame.sprite
+
 from UI.interface.mainMenu import MainMenu
 from character.MainCharacter import *
 from character.Item import Item
-from settings import Settings
+from settings import *
 from camera.cameraGroup import CameraGroup
-from generic import Generic
+from sprites.generic import Generic
+from sprites.tree import Tree
+from pytmx.util_pygame import load_pygame
 
 movement = []
 need_moveWithMouse = False
@@ -13,9 +17,8 @@ class FroestGarden:
     def __init__(self):
         # 初始化游戏
         pygame.init()
-        # 读取游戏设置
-        self.settings = Settings()
-        self.screen = pygame.display.set_mode((self.settings.SCREEN_WIDTH, self.settings.SCREEN_HEIGHT))
+        # 设置屏幕大小
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         # 设置游戏标题
         pygame.display.set_caption("Forest Garden")
         # 载入游戏主界面
@@ -25,19 +28,28 @@ class FroestGarden:
         # 游戏状态 1为界面状态，2为游戏状态
         self.game_state = 1
         # 添加人物
-        self.player = MainCharacter(self.settings.SCREEN_WIDTH, self.settings.SCREEN_HEIGHT, self.screen)
+        self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen)
         # New，将这部分代码放入player的初始化函数中
         # 添加测试物品
         self.player.gainItem(Item(1))
         self.player.gainItem(Item(2))
         # New，精灵组
         self.all_sprites = CameraGroup()
+        # New，碰撞精灵组
+        self.collision_sprites = pygame.sprite.Group()
         # New，增加地图
         self.setup()
 
 
 
     def setup(self):
+        tmx_data = load_pygame('map.tmx')
+
+        # 读取地图中的树并创建树的精灵
+        for x, y, surf in tmx_data.get_layer_by_name('tree').tiles():
+            Tree((x * TILE_SIZE, y * TILE_SIZE), surf, [self.all_sprites, self.collision_sprites], LAYERS['ground plant'])
+
+        #
         # 生成地图（简单背景）
         Generic(
             pos=(0, 0),

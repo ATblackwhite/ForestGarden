@@ -1,14 +1,13 @@
 import pygame
 from UI.button.playButton import PlayButton
-from settings import Settings
+from settings import *
 
 class MainMenu:
     def __init__(self, game):
         self.game = game
         self.screen = game.screen
-        self.settings = Settings()
         self.background = pygame.transform.scale(pygame.image.load(r"sources\UI\mainMenu\mainMenu.png"),
-                                                  (self.settings.SCREEN_WIDTH, self.settings.SCREEN_HEIGHT))
+                                                  (SCREEN_WIDTH, SCREEN_HEIGHT))
         self.play_button = PlayButton(self.game)
 
     def draw_menu(self):

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="3">
+ <tileset firstgid="1" source="星露谷物语素材/spring_beach..tsx"/>
+ <tileset firstgid="528" source="星露谷物语素材/spring_outdoorsTileSheet..tsx"/>
+ <tileset firstgid="2503" source="星露谷物语素材/fruitTrees..tsx"/>
+ <tileset firstgid="3448" source="星露谷物语素材/robot..tsx"/>
+ <layer id="1" name="water" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJztwwEJAAAMBKHL8P3DDpZDwVVTVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/AVI6vz8=
+  </data>
+ </layer>
+ <layer id="2" name="sand" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJztnNlt5DAMht3DjB9cQJ7c1LbiBsbjo4CUsqWtFJDAF8Z7ABtgQ+7/AYI9Hom2ReugDg6DEEIIIYQQQgghhBBCCCGEEEIIIT6bl2H4/mjh2cJpx8OOfr62sLWwW5zVwm7/+7Uef7FrLsOv7/i92v+73Xsx+Z7mtOs74p2Ie+KefK4N6fxZnojX3vXbv87v39Ge/XVux3sLo4VbC7OdT3Z+uzi/I66nv1uY8Xu8kH03GS5rhMwJ6Sbcd4b8CfJ5r5udz+EZ+/mZQB9P04e/h7/vDUe+I/PI8zbm6xjieZ5Rfy7f70kZE+TO4X7UAZ/Lr1G2p/M4ewJ9tG/m1fOPeuD7+HvHb8/P5+G9XsaL4Nen4eM3Th3cLuSwvHic24UsT0f983mzlA++s5cB1g/j8P69mBfMs3H4mA8sb/y+r9JHffDbGHEtfgP8jqYgj/XaM4E+Wlv3yjo/wnxlOaFumOfMI7YBrIuu2p+or1hPsn6M+e6/439M30MGfbT+yCvf5StwVQ8yj1n+fgXbr37Mog/WGZVgPdv1+Eigj9PKh5ftSswhrAn00e0PtgGVYJvTjxn6u5uVD69jK8E2v+sjS/lgX7Ia/m5dJ0cCfRxWX3mZrgb78lnqK9oV1eAYSpb6ym3yivpw26q/35ZAH4vZ539iX2WEtm4GfRzWv/I+VjX4rWWwB1foo7KN3uviDP2rRygf1Wz0CSFD+djCeHtFffj4Q4b244T9UbH94HxKBn08oI+KsL7Kog9v8yrCebAM7QfnByvCdRhZ5qN+NldbgWz93QXj7RXheEkGfezF6yuukcjQnh+mj4pjiR3OtWVozzlfWxGuDVsS6OOB+Y+KcK1ihvWJi+mjan3FNckZ9PFE+ag2ttvh2pkM84ML1l9VbEO43jVD/2rBeHs1mzCu882wnmEJ+w0qwb0ImdbDeXterU2P+3Uy6GMtXD7YT8ky3n5gv1o1fXQ4F53BHvT6qmJft8O56Az2h89HVetbOdz7lmX8quraxA73FWawB8/i8+fs82YoH77+qvJ4oocM/asV66krwn28GfRxYD1cRbh+N0N/d8V4YkWd0CdBhvbjCfujYptOPw0Z1jOcmP+o2IZw/3mG9VdH8flBjrln0Mda3B6k/5oM47sb5qMqQv80GcavfD9nVX3Q91CG/tXyH9gf9I/11VmLj+/SR10G+3yHPVgR+ijLYH9s2H9eEfrgzNB+bH+xfpf+QaM/v68C/S1m6F9F/wzsH0Z/hNGPIf1Fcg8718zG9NFfa/TFF33nRr+u0R/jPciNfXc+axb7gz5S6dcz+lONvmDpo5fjRLefxKFvl+iHMvqVZd5TF2OQMYa0lBe/iwz6eGn6aGWk97P6eEIv072e7W3f23nTVy9Db7/7ccf1NRx3i7OYrIcdV0vvMjaTcUDeYfE8jcs77NyPfr8dch645wF5i537fy+flWlCCCGEEEIIIYQQQgghhBBCCCGEeMcPgHEuZw==
+  </data>
+ </layer>
+ <layer id="3" name="grass" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt0TEKw0AQBEGD//8Jv9ShGCtwImghqmDzu+nXCwAAAAAAAAAAAPjn896j9dujuKve+wR1i6rrXdUb6rHqDfVY9YZ6rHpDTVa9nx6r3k+PVe+nx6r302PV++lxVm+ox6o31GPVG+pxqPfT41Bvp8eqt9Nj1dvpsert9Fj1dnqsejs9Vr2dHqveTo9Vb6fHqrfT46zeT49V76fHqvfTYtUb6rHqDfVY9YZ6rHpDTQ71dnqsejs9Vr2dHqveTo9Vb6fHqrfTY9Xb6XFW76fHqvfTY9X76XGot9Nj1dvpsert9Fj1dnqsejs9Vr2dHqveTo9Vb6fHuvKvdYcn9HgSPQAAAAAAAAAAuIMvhs6u8Q==
+  </data>
+ </layer>
+ <layer id="4" name="tree" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt2jEKwkAQBdAFtckh1GuoN1SvYbyGejInhZ1dFv2E9+CXgcAfppltDQAAAAAAAAAAAAAAYDlWQ2vrymb4958w2VYPu8peH93MmfFDfXOsnPTRjRnPYsb55lzzcKlczUWEW/UwVu76iPCoHp6Vlz4AAACAQO5+WdxEsriJMLEns9iTWexJAACA3/BGM4s3mlm80eTDrsxiV/Y191ZhV/blVpHFrQIAAAAAAAAAAAAAYFnebBoZxg==
+  </data>
+ </layer>
+ <layer id="5" name="trader" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt0bENABAUQMG/gH3p6NiaxgIaJHcTvORFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwpp4iSblew1fWi+fGMvl4MPwAAAAAAAAAAAODIBLPaA1I=
+  </data>
+ </layer>
+ <objectgroup id="6" name="objects">
+  <object id="1" name="start" x="777.333" y="853.333">
+   <point/>
+  </object>
+  <object id="2" name="trader" x="1114.67" y="1157.33" width="45.3333" height="41.3333"/>
+ </objectgroup>
+ <layer id="7" name="collision" width="100" height="100" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJzt3LENgEAQA8HPSOm/WmpAcsCIHelybwN3TpIkSZIkSZIkSZIkWbuvf93XCRtXhFZh44rQKmxcEVqFjStCq7BxRWgVNq4IrcLGFaFV2LgitAobV4RWYeOK0CpsXBFahY0rQquwcUVoFTauCK3CxhWhVdi4IrQKG1eEVmHjitAqbFwRWoWNK0KrsHFFaBU2rgitwsYVoVXYuCK0ChtXhFZh44rQKmxcEVqFjStCq7BxRWgVNq4IrcLGFaFV2LgitAobV4RWYeOK0CpsXBFahY0rQquwcUVoFTauCK3CxhWhVdi4IrQKG1eEVmHjitAqbFwRWoWNK0KrsHFFaBU2rgitwsYVoVXYuCK0ChtXhFZh44rQKmxcEVqFjStCq7BxRWgVNq4IrcLGFaFV2LgitAobV4RWYeOK0Pr237Z+SZIkSZIkSZIkSZJk7wGfyxU1
+  </data>
+ </layer>
+ <layer id="8" name="farmable" width="100" height="100" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJzt0TEKw0AQBEHj/7/WL3AoxgqcCFqIKtj8bvr1AgAAAAAAAAAAAP75vPdo/fYo7qr3PkHdoup6V/WGeqx6Qz1WvaEeq95Qk1Xvp8eq99Nj1fvpser99Fj1fnqc1RvqseoN9Vj1hnoc6v30ONTb6bHq7fRY9XZ6rHo7PVa9nR6r3k6PVW+nx6q302PV2+mx6u30OKv302PV++mx6v20WPWGeqx6Qz1WvaEeq95Qk0O9nR6r3k6PVW+nx6q302PV2+mx6u30WPV2epzV++mx6v30WPV+ehzq7fRY9XZ6rHo7PVa9nR6r3k6PVW+nx6q302PV2+mxrvxr3eEJPZ5EDwAAAAAAAAAA7uALHM7iIA==
+  </data>
+ </layer>
+</map>
