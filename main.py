@@ -8,6 +8,7 @@ from camera.cameraGroup import CameraGroup
 from sprites.generic import Generic
 from sprites.tree import Tree
 from pytmx.util_pygame import load_pygame
+from camera.soilLayer import SoilLayer
 
 movement = []
 need_moveWithMouse = False
@@ -31,7 +32,10 @@ class FroestGarden:
         self.collision_sprites = pygame.sprite.Group()
         # 游戏状态 1为界面状态，2为游戏状态
         self.game_state = 1
-        # 将这部分代码放入player的初始化函数中
+        # NEW player的初始化被放入setup函数中
+        self.player = None
+        # NEW 土地网格，在setup中初始化
+        self.soil_layer = None
         # 增加地图
         self.setup()
 
@@ -63,7 +67,10 @@ class FroestGarden:
                 start = obj
         # 添加人物
         self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (start.x, start.y), self.all_sprites)
-        # self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (0, 0), self.all_sprites)
+
+        # 土地网格初始化
+        self.soil_layer = SoilLayer(self.all_sprites)
+
 
     def run_game(self):
         # 游戏循环，保证游戏开始运行时不会终止
