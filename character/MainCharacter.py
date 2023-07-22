@@ -8,8 +8,8 @@ from camera.cameraGroup import *
 class MainCharacter(pygame.sprite.Sprite):
 
     animation = []
-    map_width = 640
-    map_height = 480
+    map_width = 680
+    map_height = 380
     width = 31
     height = 36
     posx = (map_width - width) / 2
@@ -38,6 +38,7 @@ class MainCharacter(pygame.sprite.Sprite):
         self.ownBackpack(Backpack(self))
         self.ownInventory(Inventory(self))
         self.loadAnimation()
+        self.pos = pos
 
         #New
         if self.item_animating:
@@ -49,15 +50,23 @@ class MainCharacter(pygame.sprite.Sprite):
         self.z = LAYERS['main']
 
 
+    def update_to_camera(self):
+        if self.item_animating:
+            status = self.equiped_item.item_id + str(self.direction)
+            self.image = self.item_ani[self.status][self.ani_frame]
+        else:
+            self.image = self.animate[self.direction][self.move_frame]
+        self.pos = self.offset = pygame.math.Vector2(self.posx, self.posy)
+        self.rect = self.image.get_rect(center=self.pos)
+        self.z = LAYERS['main']
+
     # 行走动画
     def move_animate(self, direction):
         if not (direction == self.direction):
             self.move_frame = 0
             self.direction = direction
-
-    def display(self, frameChange):
-        self.screen.blit(self.animate[self.direction][self.move_frame], (self.posx, self.posy))
-        self.move_frame = (self.move_frame + frameChange) % 3
+        self.move_frame += 1
+        self.move_frame = self.move_frame% 3
 
     # 坐标变化
     def move(self, dx, dy):
