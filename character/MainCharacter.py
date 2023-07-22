@@ -1,16 +1,11 @@
 import pygame
 from character.TextWrapTool import displayText
+from sprites.generic import *
+from sprites.tree import *
+from settings import *
+from camera.cameraGroup import *
 
-
-class MainCharacter:
-
-    def __init__(self, map_width, map_height, screen):
-        self.map_width = map_width
-        self.map_height = map_height
-        self.screen = screen
-        self.loadAnimation()
-        self.ownBackpack(Backpack(self))
-        self.ownInventory(Inventory(self))
+class MainCharacter(pygame.sprite.Sprite):
 
     animation = []
     map_width = 640
@@ -22,23 +17,47 @@ class MainCharacter:
 
     movement = []
     direction = 0
-    frame = 0
+    move_frame = 0
+    ani_frame = 0
     animate = []
+    item_ani = {}
+
+    item_animating = False
 
     equiped_num = -1
     equiped_item = None
+
+    #New
+    def __init__(self, map_width, map_height, screen, pos, group):
+        super().__init__(group)
+
+        self.map_width = map_width
+        self.map_height = map_height
+        self.screen = screen
+        self.loadAnimation()
+        self.ownBackpack(Backpack(self))
+        self.ownInventory(Inventory(self))
+        self.loadAnimation()
+
+        #New
+        if self.item_animating:
+            status = self.equiped_item.item_id + str(self.direction)
+            self.image = self.item_ani[self.status][self.ani_frame]
+        else:
+            self.image = self.animate[self.direction][self.move_frame]
+        self.rect = self.image.get_rect(center=pos)
+        self.z = LAYERS['main']
 
 
     # 行走动画
     def move_animate(self, direction):
         if not (direction == self.direction):
-            self.frame = 0
+            self.move_frame = 0
             self.direction = direction
 
     def display(self, frameChange):
-        self.screen.blit(self.animate[self.direction][self.frame], (self.posx, self.posy))
-        self.frame = (self.frame + frameChange) % 3
-
+        self.screen.blit(self.animate[self.direction][self.move_frame], (self.posx, self.posy))
+        self.move_frame = (self.move_frame + frameChange) % 3
 
     # 坐标变化
     def move(self, dx, dy):
@@ -65,9 +84,52 @@ class MainCharacter:
         if direction == 3:
             self.move(1, 0)
 
+    def ownBackpack(self, backpack):
+        self.backpack = backpack
+        self.backpack.createSpace()
+
+    def ownInventory(self, inventory):
+        self.inventory = inventory
+        self.inventory.createHandSpace()
+
+    def openBackpack(self):
+        self.backpack.display()
+
+    def gainItem(self, item):
+        space_left = False
+        for i in self.backpack.space_list:
+            for j in i:
+                if not j.occupied:
+                    j.pushItem(item)
+                    space_left = True
+                    break
+            if space_left:
+                break
+        if not space_left:
+            print("NO Space left")
+
+    def equipItem(self, equip_num):
+        self.inventory.moveChose(equip_num)
+        if equip_num != self.equiped_num:
+            self.equiped_num = equip_num
+            self.equiped_item = self.inventory.hand_list[self.equiped_num].item
+        else:
+            self.equiped_num = -1
+            self.equiped_item = None
+
+    def useItemAnimate(self, item_ID):
+        self.item_animating = True
+        item_ani_group = self.item_ani[item_ID]
+        display_frame = item_ani_group[self.direction][self.ani_frame]
+        self.ani_frame += 1
+        if self.ani_frame == len(item_ani_group[self.direction]):
+            self.item_animating = False
+        return display_frame
+
+
     # 前置加载
     def loadAnimation(self):
-
+        # 行走动画
         front = []
         back = []
         left = []
@@ -110,38 +172,7 @@ class MainCharacter:
         self.animate.append(right)
         self.animate.append(left)
 
-    def ownBackpack(self, backpack):
-        self.backpack = backpack
-        self.backpack.createSpace()
-
-    def ownInventory(self, inventory):
-        self.inventory = inventory
-        self.inventory.createHandSpace()
-
-    def openBackpack(self):
-        self.backpack.display()
-
-    def gainItem(self, item):
-        space_left = False
-        for i in self.backpack.space_list:
-            for j in i:
-                if not j.occupied:
-                    j.pushItem(item)
-                    space_left = True
-                    break
-            if space_left:
-                break
-        if not space_left:
-            print("NO Space left")
-
-    def equipItem(self, equip_num):
-        self.inventory.moveChose(equip_num)
-        if equip_num != self.equiped_num:
-            self.equiped_num = equip_num
-            self.equiped_item = self.inventory.hand_list[self.equiped_num].item
-        else:
-            self.equiped_num = -1
-            self.equiped_item = None
+        # 道具使用动画
 
 
 class Backpack:
@@ -154,7 +185,7 @@ class Backpack:
     space_column = 5
     opened = False
 
-    #used in main
+    # used in main
     item_chose = None
     item_switch = None
 
@@ -224,7 +255,6 @@ class Backpack:
 
 
 class BackSpace:
-
     width = 49
     height = 49
 
@@ -257,7 +287,7 @@ class BackSpace:
             self.item.display()
 
     def ifMouseChose(self, mouse_x, mouse_y):
-        if self.posx <= mouse_x < self.posx + self.width and self.posy <= mouse_y <= self.posy+self.height:
+        if self.posx <= mouse_x < self.posx + self.width and self.posy <= mouse_y <= self.posy + self.height:
             return True
         else:
             return False
@@ -292,15 +322,14 @@ class Inventory(Backpack):
 
 
 class HandSpace(BackSpace):
-
     width = 30
     height = 30
 
     def __init__(self, x, y, inventory):
         super(HandSpace, self).__init__(x, y, inventory)
         self.inventory = inventory
-        self.posx = self.inventory.posx+15+(5+self.width)*x
-        self.posy = self.inventory.posy+7.5
+        self.posx = self.inventory.posx + 15 + (5 + self.width) * x
+        self.posy = self.inventory.posy + 7.5
 
     def pushItem(self, item):
         self.item = item
@@ -314,4 +343,3 @@ class HandSpace(BackSpace):
             self.backpack.player.screen.blit(self.normal_img, (self.posx, self.posy))
         if self.item != None:
             self.item.display()
-
