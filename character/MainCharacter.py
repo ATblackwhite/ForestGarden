@@ -7,13 +7,9 @@ from camera.cameraGroup import *
 
 class MainCharacter(pygame.sprite.Sprite):
 
-    animation = []
-    map_width = 680
-    map_height = 380
     width = 31
     height = 36
-    posx = (map_width - width) / 2
-    posy = (map_height - height) / 2
+
 
     movement = []
     direction = 0
@@ -28,17 +24,17 @@ class MainCharacter(pygame.sprite.Sprite):
     equiped_item = None
 
     #New
-    def __init__(self, map_width, map_height, screen, pos, group):
+    def __init__(self, map_width, map_height, screen, pos, group, collision_group):
         super().__init__(group)
-
+        self.collision_group = collision_group
         self.map_width = map_width
         self.map_height = map_height
         self.screen = screen
         self.loadAnimation()
         self.ownBackpack(Backpack(self))
         self.ownInventory(Inventory(self))
-        self.loadAnimation()
         self.pos = pos
+        self.posx, self.posy = pos
 
         #New
         if self.item_animating:
@@ -56,7 +52,7 @@ class MainCharacter(pygame.sprite.Sprite):
             self.image = self.item_ani[self.status][self.ani_frame]
         else:
             self.image = self.animate[self.direction][self.move_frame]
-        self.pos = self.offset = pygame.math.Vector2(self.posx, self.posy)
+        self.pos = pygame.math.Vector2(self.posx, self.posy)
         self.rect = self.image.get_rect(center=self.pos)
         self.z = LAYERS['main']
 
@@ -66,12 +62,21 @@ class MainCharacter(pygame.sprite.Sprite):
             self.move_frame = 0
             self.direction = direction
         self.move_frame += 1
-        self.move_frame = self.move_frame % len(self.animate[self.direction])
+        self.move_frame = self.move_frame% len(self.animate[self.direction])
 
     # 坐标变化
     def move(self, dx, dy):
         self.posx += dx * (self.width / 4)
         self.posy += dy * (self.height / 4)
+        self.pos = pygame.math.Vector2(self.posx, self.posy)
+        self.rect = self.image.get_rect(center=self.pos)
+        for i in self.collision_group:
+            if pygame.Rect.colliderect(self.rect, i):
+                self.posx -= dx * (self.width / 4)
+                self.posy -= dy * (self.height / 4)
+                self.pos = pygame.math.Vector2(self.posx, self.posy)
+                self.rect = self.image.get_rect(center=self.pos)
+
         if dx == 1:
             self.direction = 3
         if dx == -1:
@@ -139,65 +144,24 @@ class MainCharacter(pygame.sprite.Sprite):
     # 前置加载
     def loadAnimation(self):
         # 行走动画
-        front = []
-        back = []
-        left = []
-        right = []
 
-        b1 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_001.png')
-        b2 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_002.png')
-        b3 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_003.png')
-        b4 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_004.png')
-
-        back.append(b1)
-        back.append(b2)
-        back.append(b3)
-        back.append(b4)
-
-        f1 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_005.png')
-        f2 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_006.png')
-        f3 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_007.png')
-        f4 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_008.png')
-
-        front.append(f1)
-        front.append(f2)
-        front.append(f3)
-        front.append(f4)
-
-        l1 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_009.png')
-        l2 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_010.png')
-        l3 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_011.png')
-        l4 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_012.png')
-
-        left.append(l1)
-        left.append(l2)
-        left.append(l3)
-        left.append(l4)
-
-        r1 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_013.png')
-        r2 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_014.png')
-        r3 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_015.png')
-        r4 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_016.png')
-
-        right.append(r1)
-        right.append(r2)
-        right.append(r3)
-        right.append(r4)
-
-        self.animate.append(front)
-        self.animate.append(back)
-        self.animate.append(left)
-        self.animate.append(right)
-
+        for i in range(4):
+            self.animate.append([])
+            for j in range(4):
+                if i*4+j+1 < 10:
+                    route = 'sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_00'+str(i*4+j+1)+'.png'
+                else:
+                    route = 'sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_0' + str(i * 4 + j+1) + '.png'
+                self.animate[i].append(pygame.image.load(route))
 
         # 道具使用动画
 
 
 class Backpack:
-    posx = 41.5
-    posy = 20
+    posx = 200
+    posy = 100
     backpack_backgroung = pygame.image.load('sources/UI/UIPack/PNG/yellow_button05.png')
-    backpack_background = pygame.transform.scale(backpack_backgroung, (600, 300))
+    backpack_background = pygame.transform.scale(backpack_backgroung, (1200, 600))
     space_list = []
     space_row = 4
     space_column = 5
@@ -222,9 +186,9 @@ class Backpack:
 
     def showDetail(self, item):
         if item != None:
-            show_img = pygame.transform.scale(item.icon, (100, 100))
-            self.player.screen.blit(show_img, (360 + self.posx, 20 + self.posy))
-            displayText(item.description, self.player.screen, 30, 370 + self.posx, 20 + self.posy + 100)
+            show_img = pygame.transform.scale(item.icon, (200, 200))
+            self.player.screen.blit(show_img, (720 + self.posx, 40 + self.posy))
+            displayText(item.description, self.player.screen, 60, 720 + self.posx, 60 + self.posy + 200)
 
     def display(self):
         self.opened = True
@@ -273,8 +237,8 @@ class Backpack:
 
 
 class BackSpace:
-    width = 49
-    height = 49
+    width = 98
+    height = 98
 
     def __init__(self, x, y, backpack):
         self.backpack = backpack
@@ -285,8 +249,8 @@ class BackSpace:
         self.chosen_img = pygame.transform.scale(self.chosen_img, (self.width, self.height))
         self.x = x
         self.y = y
-        self.posx = (20 * x + self.width * x) + (backpack.posx + 20)
-        self.posy = (20 * y + self.height * y) + (backpack.posy + 20)
+        self.posx = (40 * x + self.width * x) + (backpack.posx + 40)
+        self.posy = (40 * y + self.height * y) + (backpack.posy + 40)
         self.item = None
         self.choosed = False
 
@@ -312,10 +276,10 @@ class BackSpace:
 
 
 class Inventory(Backpack):
-    posx = 240
-    posy = 320
+    posx = 600
+    posy = 770
     hand_background = pygame.image.load('sources/UI/UIPack/PNG/green_button13.png')
-    hand_background = pygame.transform.scale(hand_background, (200, 50))
+    hand_background = pygame.transform.scale(hand_background, (400, 100))
     hand_list = []
     hand_capacity = 5
     chosen_ID = -1
@@ -340,14 +304,14 @@ class Inventory(Backpack):
 
 
 class HandSpace(BackSpace):
-    width = 30
-    height = 30
+    width = 60
+    height = 60
 
     def __init__(self, x, y, inventory):
         super(HandSpace, self).__init__(x, y, inventory)
         self.inventory = inventory
-        self.posx = self.inventory.posx + 15 + (5 + self.width) * x
-        self.posy = self.inventory.posy + 7.5
+        self.posx = self.inventory.posx + 30 + (10 + self.width) * x
+        self.posy = self.inventory.posy + 15
 
     def pushItem(self, item):
         self.item = item
