@@ -25,20 +25,21 @@ class FroestGarden:
         self.main_menu = MainMenu(self)
         # 添加系统时钟
         self.clock = pygame.time.Clock()
+        #精灵组
+        self.all_sprites = CameraGroup()
+        # 碰撞精灵组
+        self.collision_sprites = pygame.sprite.Group()
+        # 增加地图
+        self.setup()
         # 游戏状态 1为界面状态，2为游戏状态
         self.game_state = 1
         # 添加人物
-        self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen)
-        # New，将这部分代码放入player的初始化函数中
+        self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (640, 380), self.all_sprites)
+        # 将这部分代码放入player的初始化函数中
         # 添加测试物品
         self.player.gainItem(Item(1))
         self.player.gainItem(Item(2))
-        # New，精灵组
-        self.all_sprites = CameraGroup()
-        # New，碰撞精灵组
-        self.collision_sprites = pygame.sprite.Group()
-        # New，增加地图
-        self.setup()
+
 
 
 
@@ -66,6 +67,8 @@ class FroestGarden:
             self.check_event()
             # 绘制屏幕
             if self.game_state != 0:  # 这步需要再判断因为游戏可能在check_event()函数中关闭，如果关闭会导致此函数报错
+                #New 实时更新player位置给camera
+                self.player.update_to_camera()
                 self.update_screen()
 
     def update_screen(self):
@@ -75,16 +78,14 @@ class FroestGarden:
             # 让最近绘制的屏幕可见
         elif self.game_state == 2:
             # 渲染精灵组中所有的精灵
-            self.all_sprites.custom_draw()
+            self.all_sprites.custom_draw(self.player)
             self.all_sprites.update(10)
             # 低层环境人物绘制
             global need_moveWithMouse
             global movement
+            #New 删除了人物display的部分 避免重复绘制
             if len(movement) != 0:
                 self.player.move_by_dire(movement[len(movement) - 1])
-                self.player.display(1)
-            else:
-                self.player.display(0)
             # 最高层UI绘制
             if self.game_state == 2:
                 if self.player.backpack.opened:
@@ -167,7 +168,7 @@ class FroestGarden:
                 elif event.key == pygame.K_TAB:
                     self.player.openBackpack()
                     movement = []
-                #New 物品栏切换判断
+                #物品栏切换判断
                 elif event.key == pygame.K_1:
                     self.player.equipItem(0)
                 elif event.key == pygame.K_2:
