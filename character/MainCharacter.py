@@ -8,9 +8,12 @@ from camera.cameraGroup import *
 class MainCharacter(pygame.sprite.Sprite):
 
     animation = []
+    map_width = 680
+    map_height = 380
     width = 31
     height = 36
-
+    posx = (map_width - width) / 2
+    posy = (map_height - height) / 2
 
     movement = []
     direction = 0
@@ -36,7 +39,6 @@ class MainCharacter(pygame.sprite.Sprite):
         self.ownInventory(Inventory(self))
         self.loadAnimation()
         self.pos = pos
-        self.posx, self.posy = pos
 
         #New
         if self.item_animating:
@@ -64,13 +66,12 @@ class MainCharacter(pygame.sprite.Sprite):
             self.move_frame = 0
             self.direction = direction
         self.move_frame += 1
-        self.move_frame = self.move_frame% 3
+        self.move_frame = self.move_frame % len(self.animate[self.direction])
 
     # 坐标变化
     def move(self, dx, dy):
         self.posx += dx * (self.width / 4)
         self.posy += dy * (self.height / 4)
-
         if dx == 1:
             self.direction = 3
         if dx == -1:
@@ -143,42 +144,51 @@ class MainCharacter(pygame.sprite.Sprite):
         left = []
         right = []
 
-        f1 = pygame.image.load('sources/Character/rpgsprites1/seperateImage/warrior_m_008.png')
-        f2 = pygame.image.load('sources/Character/rpgsprites1/seperateImage/warrior_m_007.png')
-        f3 = pygame.image.load('sources/Character/rpgsprites1/seperateImage/warrior_m_009.png')
-
-        front.append(f1)
-        front.append(f2)
-        front.append(f3)
-
-        r1 = pygame.image.load('sources/Character/rpgsprites1/seperateImage/warrior_m_011.png')
-        r2 = pygame.image.load('sources/Character/rpgsprites1/seperateImage/warrior_m_010.png')
-        r3 = pygame.image.load('sources/Character/rpgsprites1/seperateImage/warrior_m_012.png')
-
-        right.append(r1)
-        right.append(r2)
-        right.append(r3)
-
-        b1 = pygame.image.load('sources/Character/rpgsprites1/seperateImage/warrior_m_002.png')
-        b2 = pygame.image.load('sources/Character/rpgsprites1/seperateImage/warrior_m_001.png')
-        b3 = pygame.image.load('sources/Character/rpgsprites1/seperateImage/warrior_m_003.png')
+        b1 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_001.png')
+        b2 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_002.png')
+        b3 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_003.png')
+        b4 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_004.png')
 
         back.append(b1)
         back.append(b2)
         back.append(b3)
+        back.append(b4)
 
-        l1 = pygame.image.load('sources/Character/rpgsprites1/seperateImage/warrior_m_005.png')
-        l2 = pygame.image.load('sources/Character/rpgsprites1/seperateImage/warrior_m_004.png')
-        l3 = pygame.image.load('sources/Character/rpgsprites1/seperateImage/warrior_m_006.png')
+        f1 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_005.png')
+        f2 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_006.png')
+        f3 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_007.png')
+        f4 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_008.png')
+
+        front.append(f1)
+        front.append(f2)
+        front.append(f3)
+        front.append(f4)
+
+        l1 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_009.png')
+        l2 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_010.png')
+        l3 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_011.png')
+        l4 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_012.png')
 
         left.append(l1)
         left.append(l2)
         left.append(l3)
+        left.append(l4)
 
-        self.animate.append(back)
+        r1 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_013.png')
+        r2 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_014.png')
+        r3 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_015.png')
+        r4 = pygame.image.load('sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_016.png')
+
+        right.append(r1)
+        right.append(r2)
+        right.append(r3)
+        right.append(r4)
+
         self.animate.append(front)
-        self.animate.append(right)
+        self.animate.append(back)
         self.animate.append(left)
+        self.animate.append(right)
+
 
         # 道具使用动画
 

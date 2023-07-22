@@ -25,6 +25,7 @@ class Item:
         self.space = space
         self.posx = self.space.posx+3
         self.posy = self.space.posy
+        self.icon_backpack = pygame.transform.scale(self.icon, (self.space.width-5, self.space.height-5))
         if isBackpack:
             self.icon = self.icon_backpack
         else:
