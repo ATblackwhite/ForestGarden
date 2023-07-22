@@ -66,8 +66,9 @@ class FroestGarden:
             if obj.name == 'start':
                 start = obj
         # 添加人物
-        self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (start.x, start.y), self.all_sprites)
-
+        self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (start.x, start.y), self.all_sprites, self.collision_sprites)
+        #New 初始道具
+        self.player.gainItem(Item(2))
         # 土地网格初始化
         self.soil_layer = SoilLayer(self.all_sprites)
 
