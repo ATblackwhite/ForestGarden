@@ -2,7 +2,7 @@ import pygame.sprite
 
 from UI.interface.mainMenu import MainMenu
 from character.MainCharacter import *
-
+from character.Item import *
 from settings import *
 from camera.cameraGroup import CameraGroup
 from sprites.generic import Generic
