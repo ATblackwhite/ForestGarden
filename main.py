@@ -36,6 +36,8 @@ class FroestGarden:
         self.player = None
         # NEW 土地网格，在setup中初始化
         self.soil_layer = None
+        # 树的精灵组
+        self.tree_sprites = pygame.sprite.Group()
         # 增加地图
         self.setup()
 
@@ -55,7 +57,7 @@ class FroestGarden:
 
         # 读取地图中的树并创建树的精灵
         for obj in tmx_data.get_layer_by_name('tree'):
-            Tree(pos=(obj.x, obj.y), surf=obj.image, groups=[self.all_sprites, self.collision_sprites], name=obj.name)
+            Tree(pos=(obj.x, obj.y), surf=obj.image, groups=[self.all_sprites, self.collision_sprites, self.tree_sprites], name=obj.name)
 
         # 边缘空气墙
         for x, y, surf in tmx_data.get_layer_by_name('collision').tiles():
@@ -116,7 +118,9 @@ class FroestGarden:
 
         global need_moveWithMouse
         global movement
+        # 添加自定义事件用于测试
         for event in pygame.event.get():
+
             if event.type == pygame.QUIT:
                 self.game_state = 0
                 pygame.quit()

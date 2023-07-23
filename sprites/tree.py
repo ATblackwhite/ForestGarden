@@ -1,4 +1,5 @@
 from sprites.generic import Generic
+from sprites.particle import Particle
 import pygame
 from settings import *
 
@@ -14,8 +15,16 @@ class Tree(Generic):
         self.stump_image = pygame.image.load(r"asset\objects\fruitTrees__036.png").convert_alpha()
 
     def damage(self):
-        self.health -= 1
-
-        if self.health <= 0:
-            self.alive = False
-            self.image = self.stump_image
+        if self.alive:
+            self.health -= 1
+            Particle(
+                pos=self.rect.topleft,
+                surf=self.image,
+                groups=self.groups()[0],
+                z=LAYERS['fruit']
+            )
+            if self.health <= 0:
+                self.alive = False
+                self.image = self.stump_image
+                self.rect = self.image.get_rect(midbottom=self.rect.midbottom)
+                self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.5, -self.rect.height * 0.6)

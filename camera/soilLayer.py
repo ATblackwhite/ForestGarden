@@ -6,8 +6,11 @@ class SoilLayer:
     def __init__(self, all_sprites):
         # sprite groups
         self.all_sprites = all_sprites
-        self.soil_sprites = pygame.sprite.Group()
 
+        # 耕地的精灵组
+        self.soil_sprites = pygame.sprite.Group()
+        # 水地的精灵组
+        self.water_sprites = pygame.sprite.Group()
         # graphics
 
         # 地图网格
@@ -17,6 +20,7 @@ class SoilLayer:
         # 土壤的rect
         self.hit_rects = []
         self.create_hit_rects()
+
 
     def create_soil_grid(self):
         ground = pygame.image.load(r"asset/map.png")
@@ -40,7 +44,6 @@ class SoilLayer:
             self.grid[y][x].append('D')
 
     def create_hit_rects(self):
-
         for index_row, row in enumerate(self.grid):
             for index_col, cell in enumerate(row):
                 if 'F' in cell:
@@ -48,3 +51,47 @@ class SoilLayer:
                     y = index_row * TILE_SIZE
                     rect = pygame.Rect(x, y, TILE_SIZE, TILE_SIZE)
                     self.hit_rects.append(rect)
+
+    def plough(self, target_point):
+        x = int(target_point.x // TILE_SIZE)
+        y = int(target_point.y // TILE_SIZE)
+        # print(x, y)
+        cell = self.grid[y][x]
+        if 'F' in cell and 'X' not in cell:
+            self.grid.append('X')
+            self.grid[y][x].append(SoilTile(
+                pos=(x * TILE_SIZE, y * TILE_SIZE),
+                surf=pygame.image.load(r"asset\objects\outdoor_64_227.png"),
+                groups=[self.all_sprites, self.soil_sprites],
+            ))
+        return self.grid[y][x]
+
+    def water(self, target_point):
+        x = int(target_point.x // TILE_SIZE)
+        y = int(target_point.y // TILE_SIZE)
+        cell = self.grid[y][x]
+        if 'X' in cell and 'W' not in cell:
+            self.grid[y][x].append('W')
+            self.grid[y][x].append(WaterTile(
+                pos=(x * TILE_SIZE, y * TILE_SIZE),
+                surf=pygame.image.load(r"asset\objects\outdoor_64_682.png"),
+                groups=[self.all_sprites, self.water_sprites]
+            ))
+        return self.grid[y][x]
+
+
+
+
+class SoilTile(pygame.sprite.Sprite):
+    def __init__(self, pos, surf, groups):
+        super().__init__(groups)
+        self.image = surf
+        self.rect = self.image.get_rect(topleft=pos)
+        self.z = LAYERS['soil']
+
+class WaterTile(pygame.sprite.Sprite):
+    def __init__(self, pos, surf, groups):
+        super().__init__(groups)
+        self.image = surf
+        self.rect = self.image.get_rect(topleft=pos)
+        self.z = LAYERS['soil water']
