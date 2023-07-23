@@ -67,12 +67,13 @@ class FroestGarden:
         for obj in tmx_data.get_layer_by_name('objects'):
             if obj.name == 'start':
                 start = obj
-        # 添加人物
-        self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (start.x, start.y), self.all_sprites, self.collision_sprites)
-        #New 初始道具
-        self.player.gainItem(Item(2))
-        # 土地网格初始化
+                
+        # 土地网格初始化New 移动位置
         self.soil_layer = SoilLayer(self.all_sprites)
+        # 添加人物#New新添参数
+        self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (start.x, start.y), self.all_sprites, self.collision_sprites, self.soil_layer)
+        #New 初始道具
+        self.player.gainItem(Item("Hoe"))
 
 
     def run_game(self):
@@ -198,6 +199,9 @@ class FroestGarden:
                     self.player.equipItem(3)
                 elif event.key == pygame.K_5:
                     self.player.equipItem(4)
+                #New 交互按键判定
+                elif event.key == pygame.K_SPACE:
+                    self.player.interaction()
 
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
