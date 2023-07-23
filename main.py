@@ -204,6 +204,7 @@ class FroestGarden:
                     self.player.equipItem(4)
                 #New 交互按键判定
                 elif event.key == pygame.K_SPACE:
+                    movement = []
                     self.player.interaction()
 
             elif event.type == pygame.KEYUP:
