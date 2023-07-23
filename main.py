@@ -71,7 +71,7 @@ class FroestGarden:
         # 土地网格初始化New 移动位置
         self.soil_layer = SoilLayer(self.all_sprites)
         # 添加人物#New新添参数
-        self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (start.x, start.y), self.all_sprites, self.collision_sprites, self.soil_layer)
+        self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (start.x, start.y), self.all_sprites, self.collision_sprites, self.soil_layer, self.tree_sprites)
         #New 初始道具
         self.player.gainItem(Item("Hoe"))
         self.player.gainItem(Item("Axe"))
@@ -210,13 +210,13 @@ class FroestGarden:
                     self.player.interaction()
 
             elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT or event.key == pygame.K_a and 2 in movement:
+                if (event.key == pygame.K_LEFT or event.key == pygame.K_a) and 2 in movement:
                     movement.remove(2)
-                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d and 3 in movement:
+                elif (event.key == pygame.K_RIGHT or event.key == pygame.K_d) and 3 in movement:
                     movement.remove(3)
-                elif event.key == pygame.K_UP or event.key == pygame.K_w and 0 in movement:
+                elif (event.key == pygame.K_UP or event.key == pygame.K_w) and 0 in movement:
                     movement.remove(0)
-                elif event.key == pygame.K_DOWN or event.key == pygame.K_s and 1 in movement:
+                elif (event.key == pygame.K_DOWN or event.key == pygame.K_s) and 1 in movement:
                     movement.remove(1)
 
 
