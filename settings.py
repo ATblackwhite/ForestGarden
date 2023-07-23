@@ -19,4 +19,4 @@ LAYERS = {
     }
 
 # 设置瓦片大小
-TILE_SIZE = 16
+TILE_SIZE = 64

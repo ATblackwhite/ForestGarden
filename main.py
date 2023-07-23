@@ -59,7 +59,7 @@ class FroestGarden:
 
         # 边缘空气墙
         for x, y, surf in tmx_data.get_layer_by_name('collision').tiles():
-            Generic(pos=(x * TILE_SIZE, y * TILE_SIZE), surf=pygame.Surface((TILE_SIZE, TILE_SIZE)), groups=self.collision_sprites)
+            Generic(pos=(x * TILE_SIZE, y * TILE_SIZE), surf=pygame.Surface((TILE_SIZE, TILE_SIZE)), groups= self.collision_sprites)
         #
         # 读取地图的开始点并设置人物坐标为此坐标
         for obj in tmx_data.get_layer_by_name('objects'):

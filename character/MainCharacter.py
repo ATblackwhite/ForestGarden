@@ -43,6 +43,7 @@ class MainCharacter(pygame.sprite.Sprite):
         else:
             self.image = self.animate[self.direction][self.move_frame]
         self.rect = self.image.get_rect(center=pos)
+        self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.8, -self.rect.height * 0.75)
         self.z = LAYERS['main']
 
 
@@ -54,7 +55,6 @@ class MainCharacter(pygame.sprite.Sprite):
             self.image = self.animate[self.direction][self.move_frame]
         self.pos = pygame.math.Vector2(self.posx, self.posy)
         self.rect = self.image.get_rect(center=self.pos)
-        self.z = LAYERS['main']
 
     # 行走动画
     def move_animate(self, direction):
@@ -66,16 +66,23 @@ class MainCharacter(pygame.sprite.Sprite):
 
     # 坐标变化
     def move(self, dx, dy):
+        # 水平移动
         self.posx += dx * (self.width / 4)
+        self.hitbox.centerx = self.posx
+
+        # 垂直移动
         self.posy += dy * (self.height / 4)
+        self.hitbox.centery = self.posy
         self.pos = pygame.math.Vector2(self.posx, self.posy)
-        self.rect = self.image.get_rect(center=self.pos)
-        for i in self.collision_group:
-            if pygame.Rect.colliderect(self.rect, i):
+        self.rect.center = self.hitbox.center
+        for sprite in self.collision_group:
+            if sprite.hitbox.colliderect(self.hitbox):
                 self.posx -= dx * (self.width / 4)
                 self.posy -= dy * (self.height / 4)
                 self.pos = pygame.math.Vector2(self.posx, self.posy)
-                self.rect = self.image.get_rect(center=self.pos)
+                self.hitbox.centerx = round(self.posx)
+                self.hitbox.centery = round(self.posy)
+                self.rect.center = self.hitbox.center
 
         if dx == 1:
             self.direction = 3
@@ -152,7 +159,7 @@ class MainCharacter(pygame.sprite.Sprite):
                     route = 'sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_00'+str(i*4+j+1)+'.png'
                 else:
                     route = 'sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_0' + str(i * 4 + j+1) + '.png'
-                self.animate[i].append(pygame.image.load(route))
+                self.animate[i].append(pygame.transform.scale(pygame.image.load(route), (200, 200)))
 
         # 道具使用动画
 

@@ -14,7 +14,7 @@ class SoilLayer:
         self.grid = None
         self.create_soil_grid()
 
-        #
+        # 土壤的rect
         self.hit_rects = []
         self.create_hit_rects()
 
