@@ -38,5 +38,5 @@ class Item:
         match self.item_name:
             case "Hoe":
                 self.space.backpack.player.map_grid.plough(interaction_point)
-                print("Hoe used")
+                self.space.backpack.player.useItemAnimate(self.item_name)
 

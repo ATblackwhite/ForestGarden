@@ -61,8 +61,10 @@ class MainCharacter(pygame.sprite.Sprite):
 
     def update_to_camera(self):
         if self.item_animating:
-            status = self.equiped_item.item_name + str(self.direction)
-            self.image = self.item_ani[self.status][self.ani_frame]
+            status = self.equiped_item.item_name
+            self.image = self.item_ani[status][self.direction][self.ani_frame]
+            self.ani_frame += 1
+            self.useItemAnimate(self.equiped_item.item_name)
         else:
             self.image = self.animate[self.direction][self.move_frame]
         self.pos = pygame.math.Vector2(self.posx, self.posy)
@@ -163,12 +165,9 @@ class MainCharacter(pygame.sprite.Sprite):
     def useItemAnimate(self, item_name):
         self.item_animating = True
         item_ani_group = self.item_ani[item_name]
-        display_frame = item_ani_group[self.direction][self.ani_frame]
-        self.ani_frame += 1
         if self.ani_frame == len(item_ani_group[self.direction]):
             self.item_animating = False
-        #New
-        self.image = display_frame
+            self.ani_frame = 0
 
 
     # 前置加载
@@ -185,6 +184,35 @@ class MainCharacter(pygame.sprite.Sprite):
                 self.animate[i].append(pygame.transform.scale(pygame.image.load(route), (200, 200)))
 
         # 道具使用动画
+        #Pot
+        self.item_ani["Pot"] = []
+        for i in range(4):
+            self.item_ani["Pot"].append([])
+            for j in range(2):
+                route = 'sources/Character/CatCharacter/Item_Use/Basic Charakter Actions_0'+ str(i*2+j+1+16) +'.png'
+                self.item_ani["Pot"][i].append(pygame.transform.scale(pygame.image.load(route), (200, 200)))
+
+        # Axe
+        self.item_ani["Axe"] = []
+        for i in range(4):
+            self.item_ani["Axe"].append([])
+            for j in range(2):
+                if i * 2 + j + 1 + 8 < 10:
+                    route = 'sources/Character/CatCharacter/Item_Use/Basic Charakter Actions_00' + str(
+                        i * 2 + j + 1 + 8) + '.png'
+                else:
+                    route = 'sources/Character/CatCharacter/Item_Use/Basic Charakter Actions_0' + str(
+                        i * 2 + j + 1 + 8) + '.png'
+                self.item_ani["Axe"][i].append(pygame.transform.scale(pygame.image.load(route), (200, 200)))
+
+        # Hoe
+        self.item_ani["Hoe"] = []
+        for i in range(4):
+            self.item_ani["Hoe"].append([])
+            for j in range(2):
+                route = 'sources/Character/CatCharacter/Item_Use/Basic Charakter Actions_00' + str(
+                    i * 2 + j + 1 ) + '.png'
+                self.item_ani["Hoe"][i].append(pygame.transform.scale(pygame.image.load(route), (200, 200)))
 
 
 class Backpack:
