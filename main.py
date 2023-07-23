@@ -207,13 +207,13 @@ class FroestGarden:
                     self.player.interaction()
 
             elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a and 2 in movement:
                     movement.remove(2)
-                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d and 3 in movement:
                     movement.remove(3)
-                elif event.key == pygame.K_UP or event.key == pygame.K_w:
+                elif event.key == pygame.K_UP or event.key == pygame.K_w and 0 in movement:
                     movement.remove(0)
-                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                elif event.key == pygame.K_DOWN or event.key == pygame.K_s and 1 in movement:
                     movement.remove(1)
 
 
