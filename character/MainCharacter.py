@@ -12,6 +12,13 @@ class MainCharacter(pygame.sprite.Sprite):
 
 
     movement = []
+    #New
+    direct_move = {
+        0: (0, -1),
+        1: (0, 1),
+        2: (-1, 0),
+        3: (1, 0)
+    }
     direction = 0
     move_frame = 0
     ani_frame = 0
@@ -23,10 +30,12 @@ class MainCharacter(pygame.sprite.Sprite):
     equiped_num = -1
     equiped_item = None
 
+
     #New
-    def __init__(self, map_width, map_height, screen, pos, group, collision_group):
+    def __init__(self, map_width, map_height, screen, pos, group, collision_group, soil_layer):
         super().__init__(group)
         self.collision_group = collision_group
+        self.map_grid = soil_layer
         self.map_width = map_width
         self.map_height = map_height
         self.screen = screen
@@ -35,26 +44,29 @@ class MainCharacter(pygame.sprite.Sprite):
         self.ownInventory(Inventory(self))
         self.pos = pos
         self.posx, self.posy = pos
+        #New
+        self.interaction_point_x = self.posx + self.width / 2 + self.direct_move[self.direction][0] * self.width * 2
+        self.interaction_point_y = self.posy + self.height / 2 + self.direct_move[self.direction][1] * self.height * 2
 
         #New
         if self.item_animating:
-            status = self.equiped_item.item_id + str(self.direction)
+            status = self.equiped_item.item_name + str(self.direction)
             self.image = self.item_ani[self.status][self.ani_frame]
         else:
             self.image = self.animate[self.direction][self.move_frame]
         self.rect = self.image.get_rect(center=pos)
-        self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.8, -self.rect.height * 0.75)
         self.z = LAYERS['main']
 
 
     def update_to_camera(self):
         if self.item_animating:
-            status = self.equiped_item.item_id + str(self.direction)
+            status = self.equiped_item.item_name + str(self.direction)
             self.image = self.item_ani[self.status][self.ani_frame]
         else:
             self.image = self.animate[self.direction][self.move_frame]
         self.pos = pygame.math.Vector2(self.posx, self.posy)
         self.rect = self.image.get_rect(center=self.pos)
+        self.z = LAYERS['main']
 
     # 行走动画
     def move_animate(self, direction):
@@ -66,23 +78,16 @@ class MainCharacter(pygame.sprite.Sprite):
 
     # 坐标变化
     def move(self, dx, dy):
-        # 水平移动
         self.posx += dx * (self.width / 4)
-        self.hitbox.centerx = self.posx
-
-        # 垂直移动
         self.posy += dy * (self.height / 4)
-        self.hitbox.centery = self.posy
         self.pos = pygame.math.Vector2(self.posx, self.posy)
-        self.rect.center = self.hitbox.center
-        for sprite in self.collision_group:
-            if sprite.hitbox.colliderect(self.hitbox):
+        self.rect = self.image.get_rect(center=self.pos)
+        for i in self.collision_group:
+            if pygame.Rect.colliderect(self.rect, i):
                 self.posx -= dx * (self.width / 4)
                 self.posy -= dy * (self.height / 4)
                 self.pos = pygame.math.Vector2(self.posx, self.posy)
-                self.hitbox.centerx = round(self.posx)
-                self.hitbox.centery = round(self.posy)
-                self.rect.center = self.hitbox.center
+                self.rect = self.image.get_rect(center=self.pos)
 
         if dx == 1:
             self.direction = 3
@@ -138,14 +143,23 @@ class MainCharacter(pygame.sprite.Sprite):
             self.equiped_num = -1
             self.equiped_item = None
 
-    def useItemAnimate(self, item_ID):
+    #New
+    def interaction(self):
+        self.interaction_point_x = self.posx+self.width/2 + self.direct_move[self.direction][0]*self.width*2
+        self.interaction_point_y = self.posy + self.height / 2 + self.direct_move[self.direction][1] * self.height * 2
+        self.interaction_point = pygame.math.Vector2(self.interaction_point_x, self.interaction_point_y)
+        if self.equiped_item != None:
+            self.equiped_item.item_use(self.interaction_point)
+
+    def useItemAnimate(self, item_name):
         self.item_animating = True
-        item_ani_group = self.item_ani[item_ID]
+        item_ani_group = self.item_ani[item_name]
         display_frame = item_ani_group[self.direction][self.ani_frame]
         self.ani_frame += 1
         if self.ani_frame == len(item_ani_group[self.direction]):
             self.item_animating = False
-        return display_frame
+        #New
+        self.image = display_frame
 
 
     # 前置加载
@@ -159,7 +173,7 @@ class MainCharacter(pygame.sprite.Sprite):
                     route = 'sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_00'+str(i*4+j+1)+'.png'
                 else:
                     route = 'sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_0' + str(i * 4 + j+1) + '.png'
-                self.animate[i].append(pygame.transform.scale(pygame.image.load(route), (200, 200)))
+                self.animate[i].append(pygame.transform.scale(pygame.image.load(route), (64, 64)))
 
         # 道具使用动画
 

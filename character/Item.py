@@ -7,11 +7,11 @@ import pygame
 
 class Item:
 
-    def __init__(self, ID):
-        self.item_id = str(ID)
-        self.icon_name = self.item_id + ".img"
+    def __init__(self, name):
+        self.item_name = name
+        self.icon_name = self.item_name + ".img"
         self.icon_location = ID_Item_Table.ID_Item_Table[self.icon_name]
-        self.description_name = self.item_id + ".des"
+        self.description_name = self.item_name + ".des"
         self.description_location = ID_Item_Table.ID_Item_Table[self.description_name]
         self.icon = pygame.image.load(self.icon_location)
         self.icon_backpack = pygame.transform.scale(self.icon, (80, 80))
@@ -32,3 +32,11 @@ class Item:
 
     def display(self):
         self.space.backpack.player.screen.blit(self.icon, (self.posx, self.posy))
+
+    #New
+    def item_use(self, interaction_point):
+        match self.item_name:
+            case "Hoe":
+                self.space.backpack.player.map_grid.plough(interaction_point)
+                print("Hoe used")
+
