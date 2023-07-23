@@ -1,48 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="64" tileheight="64" infinite="0" nextlayerid="9" nextobjectid="7">
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="64" tileheight="64" infinite="0" nextlayerid="10" nextobjectid="17">
  <tileset firstgid="1" source="beach_64.tsx"/>
  <tileset firstgid="528" source="outdoor_64.tsx"/>
  <tileset firstgid="2503" source="objects/objects.tsx"/>
- <layer id="1" name="water" width="50" height="50">
+ <layer id="1" name="water" width="64" height="64">
   <data encoding="base64" compression="zlib">
-   eJztwwEJAAAMBKHL8P3DLsdAwVVTVVVVVVVVVVXV5w+KJa/J
+   eJztw0ENAAAMA6HTUP9iJ2MfSFg1VVVVVVVVVVVVVVVVVVVV9fUBnDwgEA==
   </data>
  </layer>
- <layer id="2" name="sand" width="50" height="50">
+ <layer id="2" name="sand" width="64" height="64">
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
- <layer id="3" name="light grass" width="50" height="50">
+ <layer id="3" name="tree land" width="64" height="64">
   <data encoding="base64" compression="zlib">
-   eJztl9EKgCAQBIN+v4/uIYKIUjlvT09m4F4ydp2gyG0DAAAAyMuxX1O6/l6/1yzjvW9rf4/DDB5eM5uHNWu0h1f2CA/vHm/Uz+qvT5Wr3PtXnyoXD1tfltzoPjzm6Yt+N56dikw87J2KzOhvLh6xubWurB7q/9Dof9woj6znAvVZLeIsWOvp7VRk9nq09nvlRHh4zSoeni4rOJQ8Wu4FAAAAaOUEV77keA==
+   eJztmEEKg0AQBIV8P4/OKWQIURM0U41TBXsQxO4aWFdcFhERERERkfO4315r755fn1mvSaojtaZ6d/undpiQvdXj6rl7Xa6cuQXRRX/99e/NXIPqkjID/fWn9r/+vbkJXZK+f9/7dOclzEB/dv9P9K+59AxS/kGQJMyAhO4w0T9l/9cuROZU/5pL+z+7EJn69+em9NCf9yf34GT/hHcfeQbrfn7up38L365OjuYe8Uzz71xr+d1Q/vRZ8w+m+4uIiIiIiHTwACdoy1U=
   </data>
  </layer>
- <layer id="4" name="deep grass" width="50" height="50">
+ <layer id="5" name="light grass" width="64" height="64">
   <data encoding="base64" compression="zlib">
-   eJztz8ENgDAMBMGI/nuiNcQ3HxAQ2wkz0v1vWwMAAL6wb9kPnjl/X62qO98rNr35nd006ruO/3ZENOjQoUPHLB0RdNRpGN0RbZWOES3ZVmjordDQm/k7AABUcwCcRFZW
+   eJzt1jEKgDAQRUHBA3v/TtKrIGj2685AavetRbIsAAAAwF3bOuekmdWduIOK9pQdVLYn7OCJGf/e//Y3K1X8G/05/UfzvD2Xfv369evP6B8633+D/t79g/6a/pQd6HcH6tdf0Z+wg879Z++fLm+Aq/6n50v792czzToJ9Gvv2D78semOLp0AAADAN+2Zy+o9
   </data>
  </layer>
- <objectgroup id="5" name="tree">
-  <object id="1" name="tree" gid="2506" x="2256" y="2044" width="168" height="280"/>
-  <object id="2" name="tree" gid="2506" x="728" y="2204" width="168" height="280"/>
-  <object id="3" name="tree" gid="2504" x="1888" y="1276" width="192" height="320"/>
-  <object id="4" name="tree" gid="2504" x="1468" y="2432" width="192" height="320"/>
-  <object id="5" name="tree" gid="2505" x="856" y="1080" width="192" height="320"/>
- </objectgroup>
- <layer id="6" name="collision" width="50" height="50" visible="0">
+ <layer id="6" name="deep grass" width="64" height="64">
   <data encoding="base64" compression="zlib">
-   eJztz0EJADAMwMDamn9j9bBXoHcQAZkBoOBF+/mo8dHio8VHi48WHy0+Wny0+Gjx0eKjxUeLjxYfLT5afLT4aLn+UQyAhgXEXiAR
+   eJzt0IEJgDAUQ8GCo7j/juUPoBSrFs0dZICX1gAAAACAWft2vL87a7+yL7m7Xf/qonFPtOtfXTVOv379uf1Fv379+vXrT/xAv379uf0lvb8ktwMAAAAA8L4OPC1Gzw==
   </data>
  </layer>
- <layer id="7" name="farmable" width="50" height="50" visible="0">
+ <layer id="7" name="collision" width="64" height="64" visible="0">
   <data encoding="base64" compression="zlib">
-   eJztzzsKwCAQQEELL5P7X9BC0qQQUYm/ebCNK+iEIEmStG9PzFM6/+7fXcuM/nfr+z2GFRyjhoNjVcNsCwcHB8eNjlkGDg4ODg4ODg4Ojj8sJxhKjpq7kiRJtSW265e0
+   eJztz7EJxEAAA0GDW3L/tX3+OPSCDmZAqWCvCwCAN8993r7uP4n+7b+a/u2/mv7tv5r+7b+a/u2/mv7tv5r+7b+a/u2/mv7tv5r+7b+a/u2/mv7tv5r+7b+a/u2/mv7tv5r+7b+a/u2/mv7tv5r+7b+a/u2/mv7tv1rRf9oAAODfD23zJdE=
   </data>
  </layer>
- <objectgroup id="8" name="objects">
-  <object id="6" name="start" x="1560" y="1624">
+ <layer id="8" name="farmable" width="64" height="64" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJzt0NEJwDAMQ8FA9x+2GwSPkJ/Yre5AAzytBQAAAJx6nzub5lb3xA862qd80Nk+4YPudv369Wd/0E2/fv36U/uLfv3J/UV/9gf69evXn/pBcn9yu/7s9qJfe2J7+WPTiZROAAAA4Js2Hvy8Kg==
+  </data>
+ </layer>
+ <objectgroup id="9" name="objects">
+  <object id="16" name="start" x="2104" y="1948">
    <point/>
   </object>
+ </objectgroup>
+ <objectgroup id="4" name="tree">
+  <object id="1" name="tree" gid="2508" x="3040" y="1004" width="192" height="320"/>
+  <object id="2" name="tree" gid="2508" x="912" y="3172" width="192" height="320"/>
+  <object id="3" name="tree" gid="2507" x="2484" y="3232" width="192" height="320"/>
+  <object id="4" name="tree" gid="2504" x="3012" y="3096" width="192" height="320"/>
+  <object id="5" name="tree" gid="2505" x="2200" y="3196" width="192" height="320"/>
+  <object id="6" name="tree" gid="2506" x="832" y="1124" width="192" height="320"/>
+  <object id="7" name="tree" gid="2505" x="880" y="1944" width="192" height="320"/>
+  <object id="8" name="tree" gid="2504" x="1248" y="952" width="192" height="320"/>
+  <object id="9" name="tree" gid="2506" x="1672" y="916" width="192" height="320"/>
+  <object id="10" name="tree" gid="2508" x="1532" y="3136" width="192" height="320"/>
+  <object id="11" name="tree" gid="2508" x="3128" y="1876" width="192" height="320"/>
+  <object id="13" name="tree" gid="2506" x="2104" y="932" width="192" height="320"/>
  </objectgroup>
 </map>

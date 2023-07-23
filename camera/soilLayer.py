@@ -58,11 +58,11 @@ class SoilLayer:
         # print(x, y)
         cell = self.grid[y][x]
         if 'F' in cell and 'X' not in cell:
-            self.grid.append('X')
+            self.grid[y][x].append('X')
             self.grid[y][x].append(SoilTile(
                 pos=(x * TILE_SIZE, y * TILE_SIZE),
                 surf=pygame.image.load(r"asset\objects\outdoor_64_227.png"),
-                groups=[self.all_sprites, self.soil_sprites],
+                groups=[self.all_sprites, self.soil_sprites]
             ))
         return self.grid[y][x]
 
@@ -77,9 +77,8 @@ class SoilLayer:
                 surf=pygame.image.load(r"asset\objects\outdoor_64_682.png"),
                 groups=[self.all_sprites, self.water_sprites]
             ))
+        print('water')
         return self.grid[y][x]
-
-
 
 
 class SoilTile(pygame.sprite.Sprite):
