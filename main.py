@@ -74,6 +74,8 @@ class FroestGarden:
         self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (start.x, start.y), self.all_sprites, self.collision_sprites, self.soil_layer)
         #New 初始道具
         self.player.gainItem(Item("Hoe"))
+        self.player.gainItem(Item("Axe"))
+        self.player.gainItem(Item("Pot"))
 
 
     def run_game(self):
