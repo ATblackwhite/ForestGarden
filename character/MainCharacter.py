@@ -21,11 +21,13 @@ class MainCharacter(pygame.sprite.Sprite):
     }
     direction = 0
     move_frame = 0
-    ani_frame = 0
+    ani_frame = -1
     animate = []
     item_ani = {}
 
     item_animating = False
+    item_frame_animating = False
+    moving = False
 
     equiped_num = -1
     equiped_item = None
@@ -63,7 +65,6 @@ class MainCharacter(pygame.sprite.Sprite):
         if self.item_animating:
             status = self.equiped_item.item_name
             self.image = self.item_ani[status][self.direction][self.ani_frame]
-            self.ani_frame += 1
             self.useItemAnimate(self.equiped_item.item_name)
         else:
             self.image = self.animate[self.direction][self.move_frame]
@@ -72,12 +73,15 @@ class MainCharacter(pygame.sprite.Sprite):
         self.z = LAYERS['main']
 
     # 行走动画
-    def move_animate(self, direction):
+    def move_animate(self, direction, duration = 150):
+        current_time = pygame.time.get_ticks()
         if not (direction == self.direction):
             self.move_frame = 0
             self.direction = direction
-        self.move_frame += 1
-        self.move_frame = self.move_frame% len(self.animate[self.direction])
+        if (current_time - self.animate_start_time) >= duration:
+            self.move_frame += 1
+            self.move_frame = self.move_frame% len(self.animate[self.direction])
+            self.moving = False
 
     # 坐标变化
     def move(self, dx, dy):
@@ -108,7 +112,11 @@ class MainCharacter(pygame.sprite.Sprite):
             self.direction = 1
         if dy == -1:
             self.direction = 0
-        self.move_animate(self.direction)
+
+        if not self.moving:
+            self.moving = True
+            self.animate_start_time = pygame.time.get_ticks()
+        self.move_animate(self.direction, 150)
 
     # 坐标变化（另一种输入）
     def move_by_dire(self, direction):
@@ -162,12 +170,22 @@ class MainCharacter(pygame.sprite.Sprite):
         if self.equiped_item != None:
             self.equiped_item.item_use(self.interaction_point)
 
-    def useItemAnimate(self, item_name):
+    def useItemAnimate(self, item_name, duration = 100):
         self.item_animating = True
+
+        if not self.item_frame_animating:
+            self.item_frame_animating = True
+            self.animate_start_time = pygame.time.get_ticks()
+        current_time = pygame.time.get_ticks()
+
+        if (current_time - self.animate_start_time) >= duration:
+            self.item_frame_animating = False
+            self.ani_frame+=1
+
         item_ani_group = self.item_ani[item_name]
         if self.ani_frame == len(item_ani_group[self.direction]):
             self.item_animating = False
-            self.ani_frame = 0
+            self.ani_frame = -1
 
 
     # 前置加载
