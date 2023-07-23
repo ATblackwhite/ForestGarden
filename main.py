@@ -126,8 +126,11 @@ class FroestGarden:
                 self.game_state = 0
                 pygame.quit()
 
+            #New 人物动画中不交互
+            if self.player.item_animating:
+                continue
             # 打开背包后的判定
-            if self.player.backpack.opened:
+            elif self.player.backpack.opened:
                 need_moveWithMouse = False
                 if self.player.backpack.item_chose != None:
                     self.mouse_pos = pygame.mouse.get_pos()
