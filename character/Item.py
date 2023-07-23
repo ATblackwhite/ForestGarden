@@ -30,13 +30,25 @@ class Item:
         else:
             self.icon = self.icon_inventory
 
+        self.player = self.space.backpack.player
+
     def display(self):
-        self.space.backpack.player.screen.blit(self.icon, (self.posx, self.posy))
+        self.player.screen.blit(self.icon, (self.posx, self.posy))
 
     #New
     def item_use(self, interaction_point):
         match self.item_name:
             case "Hoe":
-                self.space.backpack.player.map_grid.plough(interaction_point)
-                self.space.backpack.player.useItemAnimate(self.item_name)
+                self.player.map_grid.plough(interaction_point)
+                self.player.useItemAnimate(self.item_name)
 
+            case "Pot":
+                self.player.map_grid.water(interaction_point)
+                self.player.useItemAnimate(self.item_name)
+
+            case "Axe":
+                for i in self.player.tree_group:
+                    if i.rect.collidepoint(self.player.interaction_point):
+                        i.damage()
+
+                self.player.useItemAnimate(self.item_name)

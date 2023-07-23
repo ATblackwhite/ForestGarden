@@ -21,7 +21,7 @@ class MainCharacter(pygame.sprite.Sprite):
     }
     direction = 0
     move_frame = 0
-    ani_frame = -1
+    ani_frame = 0
     animate = []
     item_ani = {}
 
@@ -34,10 +34,13 @@ class MainCharacter(pygame.sprite.Sprite):
 
 
     #New
-    def __init__(self, map_width, map_height, screen, pos, group, collision_group, soil_layer):
+    def __init__(self, map_width, map_height, screen, pos, group, collision_group, soil_layer, tree_sprite):
+
         super().__init__(group)
         self.collision_group = collision_group
+        self.tree_group = tree_sprite
         self.map_grid = soil_layer
+
         self.map_width = map_width
         self.map_height = map_height
         self.screen = screen
@@ -170,7 +173,7 @@ class MainCharacter(pygame.sprite.Sprite):
         if self.equiped_item != None:
             self.equiped_item.item_use(self.interaction_point)
 
-    def useItemAnimate(self, item_name, duration = 100):
+    def useItemAnimate(self, item_name, duration = 200):
         self.item_animating = True
 
         if not self.item_frame_animating:
@@ -185,7 +188,7 @@ class MainCharacter(pygame.sprite.Sprite):
         item_ani_group = self.item_ani[item_name]
         if self.ani_frame == len(item_ani_group[self.direction]):
             self.item_animating = False
-            self.ani_frame = -1
+            self.ani_frame = 0
 
 
     # 前置加载
