@@ -55,7 +55,7 @@ class MainCharacter(pygame.sprite.Sprite):
         # New
         if self.item_animating:
             status = self.equiped_item.item_name + str(self.direction)
-            self.image = self.item_ani[self.status][self.ani_frame]
+            self.image = self.item_ani[status][self.ani_frame]
         else:
             self.image = self.animate[self.direction][self.move_frame]
         self.rect = self.image.get_rect(center=pos)
@@ -146,29 +146,43 @@ class MainCharacter(pygame.sprite.Sprite):
         for i in self.backpack.space_list:
             for j in i:
                 if j.item != None and j.item.item_name == item.item_name:
-                    j.addItem()
+                    j.addItem(item.num)
                     space_left = True
                     break
-                elif not j.occupied:
-                    j.pushItem(item)
-                    space_left = True
-                    break
-            if space_left:
-                self.new_item = item
-                self.gainItemAnimating = True
-                self.notice_start_time = pygame.time.get_ticks()
+
+        for i in self.inventory.hand_list:
+            if i.item != None and i.item.item_name == item.item_name:
+                i.addItem(item.num)
+                space_left = True
                 break
+
         if not space_left:
+            for i in self.backpack.space_list:
+                for j in i:
+                    if not j.occupied:
+                        j.pushItem(item)
+                        space_left = True
+                        break
+                if space_left:
+                    break
+
+        if space_left:
+            self.new_item = item
+            self.gainItemAnimating = True
+            self.notice_start_time = pygame.time.get_ticks()
+
+        else:
             print("NO Space left")
 
     def noticeGain(self, duration = 1000, num = 1):
+        self.gainItemAnimating = True
 
         current_time = pygame.time.get_ticks()
-        font = pygame.font.Font('sources/UI/UIPack/Font/kenvector_future.ttf', 24)
+        font = pygame.font.Font(size=48)
         number = font.render(str('x' + str(num)), True, (0, 0, 0))
 
-        self.screen.blit(self.new_item.icon_backpack, (self.posx-10, self.posy+50))
-        self.screen.blit(number, (self.posx+20, self.posy+50))
+        self.screen.blit(self.new_item.icon_backpack, ((SCREEN_WIDTH-self.width)/2 - 50, (SCREEN_HEIGHT-self.height)/2 - 100))
+        self.screen.blit(number, ((SCREEN_WIDTH-self.width)/2+30, (SCREEN_HEIGHT-self.height)/2 - 50))
 
         if (current_time - self.notice_start_time) >= duration:
             self.gainItemAnimating = False
@@ -328,6 +342,10 @@ class Backpack:
             desti_space.pushItem(item1)
             temp_space.item = None
             temp_space.occupied = False
+        elif item1.item_name == item2.item_name:
+            item2.num += item1.num
+            item1.space.item = None
+            item1.space.occupied = False
         else:
             temp_space = item1.space
             item2.space.pushItem(item1)
