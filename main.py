@@ -8,11 +8,12 @@ from sprites.generic import Generic
 from sprites.tree import Tree
 from pytmx.util_pygame import load_pygame
 from camera.soilLayer import SoilLayer
+from UI.rain import Rain
 
 movement = []
 need_moveWithMouse = False
 
-class FroestGarden:
+class ForestGarden:
     # 管理游戏的类
     def __init__(self):
         # 初始化游戏
@@ -29,14 +30,17 @@ class FroestGarden:
         self.all_sprites = CameraGroup()
         # 碰撞精灵组
         self.collision_sprites = pygame.sprite.Group()
-        # 游戏状态 1为界面状态，2为游戏状态
+        # 游戏状态 1为界面状态，2为游戏状态, 0为结束状态
         self.game_state = 1
-        # NEW player的初始化被放入setup函数中
+        # player的初始化被放入setup函数中
         self.player = None
-        # NEW 土地网格，在setup中初始化
+        # 土地网格，在setup中初始化
         self.soil_layer = None
         # 树的精灵组
         self.tree_sprites = pygame.sprite.Group()
+        # 雨天
+        self.if_rain = False
+        self.rain = Rain(self.all_sprites)
         # 增加地图
         self.setup()
 
@@ -89,6 +93,11 @@ class FroestGarden:
                 #New 实时更新player位置给camera
                 self.player.update_to_camera()
                 self.update_screen()
+                # 判断是否启用下雨
+                if self.if_rain:
+                    self.rain.update()
+                    self.soil_layer.water_all()
+
 
     def update_screen(self):
         if self.game_state == 1:
@@ -111,13 +120,13 @@ class FroestGarden:
                     self.player.openBackpack()
                 self.player.inventory.display()
                 if need_moveWithMouse:
-                    self.player.backpack.moveWithMouse(self.player.backpack.item_chose, self.mouse_pos[0],
-                                                      self.mouse_pos[1])
+                    self.player.backpack.moveWithMouse(self.player.backpack.item_chose, self.mouse_pos[0],self.mouse_pos[1])
                 #New 获取物品动画
                 if self.player.gainItemAnimating:
                     self.player.noticeGain(1000, self.player.new_item.num)
 
         pygame.display.flip()
+
 
     def check_event(self):
 
@@ -211,6 +220,9 @@ class FroestGarden:
                     movement = []
                     self.player.gainItem(Item("Hoe"))
                     self.player.interaction()
+                #New 增加雨天天气开关
+                elif event.key == pygame.K_r:
+                    self.if_rain ^= True
 
             elif event.type == pygame.KEYUP:
                 if (event.key == pygame.K_LEFT or event.key == pygame.K_a) and 2 in movement:
@@ -224,5 +236,5 @@ class FroestGarden:
 
 
 if __name__ == '__main__':
-    game = FroestGarden()
+    game = ForestGarden()
     game.run_game()

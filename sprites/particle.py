@@ -1,7 +1,7 @@
 import pygame
 from sprites.generic import Generic
 class Particle(Generic):
-    def __init__(self, pos, surf, groups, z, duration=200):
+    def __init__(self, pos, surf, groups, z, duration=100):
         super().__init__(pos, surf, groups, z)
         self.start_time = pygame.time.get_ticks()
         self.duration = duration
