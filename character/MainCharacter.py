@@ -5,14 +5,13 @@ from sprites.tree import *
 from settings import *
 from camera.cameraGroup import *
 
-class MainCharacter(pygame.sprite.Sprite):
 
+class MainCharacter(pygame.sprite.Sprite):
     width = 31
     height = 36
 
-
     movement = []
-    #New
+    # New
     direct_move = {
         0: (0, -1),
         1: (0, 1),
@@ -28,12 +27,12 @@ class MainCharacter(pygame.sprite.Sprite):
     item_animating = False
     item_frame_animating = False
     moving = False
+    gainItemAnimating = False
 
     equiped_num = -1
     equiped_item = None
 
-
-    #New
+    # New
     def __init__(self, map_width, map_height, screen, pos, group, collision_group, soil_layer, tree_sprite):
 
         super().__init__(group)
@@ -49,11 +48,11 @@ class MainCharacter(pygame.sprite.Sprite):
         self.ownInventory(Inventory(self))
         self.pos = pos
         self.posx, self.posy = pos
-        #New
+        # New
         self.interaction_point_x = self.posx + self.width / 2 + self.direct_move[self.direction][0] * self.width * 2
         self.interaction_point_y = self.posy + self.height / 2 + self.direct_move[self.direction][1] * self.height * 2
 
-        #New
+        # New
         if self.item_animating:
             status = self.equiped_item.item_name + str(self.direction)
             self.image = self.item_ani[self.status][self.ani_frame]
@@ -62,7 +61,6 @@ class MainCharacter(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=pos)
         self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.8, -self.rect.height * 0.75)
         self.rect = self.image.get_rect(center=pos)
-
 
     def update_to_camera(self):
         if self.item_animating:
@@ -76,14 +74,14 @@ class MainCharacter(pygame.sprite.Sprite):
         self.z = LAYERS['main']
 
     # 行走动画
-    def move_animate(self, direction, duration = 150):
+    def move_animate(self, direction, duration=150):
         current_time = pygame.time.get_ticks()
         if not (direction == self.direction):
             self.move_frame = 0
             self.direction = direction
         if (current_time - self.animate_start_time) >= duration:
             self.move_frame += 1
-            self.move_frame = self.move_frame% len(self.animate[self.direction])
+            self.move_frame = self.move_frame % len(self.animate[self.direction])
             self.moving = False
 
     # 坐标变化
@@ -147,14 +145,34 @@ class MainCharacter(pygame.sprite.Sprite):
         space_left = False
         for i in self.backpack.space_list:
             for j in i:
-                if not j.occupied:
+                if j.item != None and j.item.item_name == item.item_name:
+                    j.addItem()
+                    space_left = True
+                    break
+                elif not j.occupied:
                     j.pushItem(item)
                     space_left = True
                     break
             if space_left:
+                self.new_item = item
+                self.gainItemAnimating = True
+                self.notice_start_time = pygame.time.get_ticks()
                 break
         if not space_left:
             print("NO Space left")
+
+    def noticeGain(self, duration = 1000, num = 1):
+
+        current_time = pygame.time.get_ticks()
+        font = pygame.font.Font('sources/UI/UIPack/Font/kenvector_future.ttf', 24)
+        number = font.render(str('x' + str(num)), True, (0, 0, 0))
+
+        self.screen.blit(self.new_item.icon_backpack, (self.posx-10, self.posy+50))
+        self.screen.blit(number, (self.posx+20, self.posy+50))
+
+        if (current_time - self.notice_start_time) >= duration:
+            self.gainItemAnimating = False
+
 
     def equipItem(self, equip_num):
         self.inventory.moveChose(equip_num)
@@ -165,15 +183,15 @@ class MainCharacter(pygame.sprite.Sprite):
             self.equiped_num = -1
             self.equiped_item = None
 
-    #New
+    # New
     def interaction(self):
-        self.interaction_point_x = self.posx+self.width/2 + self.direct_move[self.direction][0]*self.width*2
+        self.interaction_point_x = self.posx + self.width / 2 + self.direct_move[self.direction][0] * self.width * 2
         self.interaction_point_y = self.posy + self.height / 2 + self.direct_move[self.direction][1] * self.height * 2
         self.interaction_point = pygame.math.Vector2(self.interaction_point_x, self.interaction_point_y)
         if self.equiped_item != None:
             self.equiped_item.item_use(self.interaction_point)
 
-    def useItemAnimate(self, item_name, duration = 200):
+    def useItemAnimate(self, item_name, duration=200):
         self.item_animating = True
 
         if not self.item_frame_animating:
@@ -183,13 +201,12 @@ class MainCharacter(pygame.sprite.Sprite):
 
         if (current_time - self.animate_start_time) >= duration:
             self.item_frame_animating = False
-            self.ani_frame+=1
+            self.ani_frame += 1
 
         item_ani_group = self.item_ani[item_name]
         if self.ani_frame == len(item_ani_group[self.direction]):
             self.item_animating = False
             self.ani_frame = 0
-
 
     # 前置加载
     def loadAnimation(self):
@@ -198,19 +215,22 @@ class MainCharacter(pygame.sprite.Sprite):
         for i in range(4):
             self.animate.append([])
             for j in range(4):
-                if i*4+j+1 < 10:
-                    route = 'sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_00'+str(i*4+j+1)+'.png'
+                if i * 4 + j + 1 < 10:
+                    route = 'sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_00' + str(
+                        i * 4 + j + 1) + '.png'
                 else:
-                    route = 'sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_0' + str(i * 4 + j+1) + '.png'
+                    route = 'sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_0' + str(
+                        i * 4 + j + 1) + '.png'
                 self.animate[i].append(pygame.transform.scale(pygame.image.load(route), (200, 200)))
 
         # 道具使用动画
-        #Pot
+        # Pot
         self.item_ani["Pot"] = []
         for i in range(4):
             self.item_ani["Pot"].append([])
             for j in range(2):
-                route = 'sources/Character/CatCharacter/Item_Use/Basic Charakter Actions_0'+ str(i*2+j+1+16) +'.png'
+                route = 'sources/Character/CatCharacter/Item_Use/Basic Charakter Actions_0' + str(
+                    i * 2 + j + 1 + 16) + '.png'
                 self.item_ani["Pot"][i].append(pygame.transform.scale(pygame.image.load(route), (200, 200)))
 
         # Axe
@@ -232,7 +252,7 @@ class MainCharacter(pygame.sprite.Sprite):
             self.item_ani["Hoe"].append([])
             for j in range(2):
                 route = 'sources/Character/CatCharacter/Item_Use/Basic Charakter Actions_00' + str(
-                    i * 2 + j + 1 ) + '.png'
+                    i * 2 + j + 1) + '.png'
                 self.item_ani["Hoe"][i].append(pygame.transform.scale(pygame.image.load(route), (200, 200)))
 
 
@@ -338,6 +358,9 @@ class BackSpace:
         item.presentInBackPack(self, True)
         self.occupied = True
 
+    def addItem(self, num = 1):
+        self.item.num += num
+
     def display(self):
         if self.choosed:
             self.backpack.showDetail(self.item)
@@ -345,7 +368,7 @@ class BackSpace:
         else:
             self.backpack.player.screen.blit(self.normal_img, (self.posx, self.posy))
         if self.item != None:
-            self.item.display()
+            self.item.display(0)
 
     def ifMouseChose(self, mouse_x, mouse_y):
         if self.posx <= mouse_x < self.posx + self.width and self.posy <= mouse_y <= self.posy + self.height:
@@ -403,4 +426,4 @@ class HandSpace(BackSpace):
         else:
             self.backpack.player.screen.blit(self.normal_img, (self.posx, self.posy))
         if self.item != None:
-            self.item.display()
+            self.item.display(1)
