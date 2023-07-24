@@ -50,5 +50,6 @@ class Item:
                 for i in self.player.tree_group:
                     if i.rect.collidepoint(self.player.interaction_point):
                         i.damage()
+                #for i in self.player
 
                 self.player.useItemAnimate(self.item_name)

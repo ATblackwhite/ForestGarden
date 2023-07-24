@@ -6,8 +6,9 @@ from settings import *
 class Tree(Generic):
     def __init__(self, pos, surf, groups, name):
         super().__init__(pos, surf, groups, LAYERS['main'])
+
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.8, -self.rect.height * 0.5)
+        self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.8, -self.rect.height * 0.8)
         # 需要让hitbox处于树根部分
         self.hitbox.bottom = self.rect.bottom
         self.health = 3
