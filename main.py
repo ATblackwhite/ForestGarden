@@ -9,14 +9,18 @@ from sprites.generic import Generic
 from sprites.tree import Tree
 from pytmx.util_pygame import load_pygame
 from camera.soilLayer import SoilLayer
+
 from sprites.plants import Plant,Emotes
+
+from UI.rain import Rain
+
 
 movement = []
 need_moveWithMouse = False
 plant_group = pygame.sprite.Group()
 emotes_group = pygame.sprite.Group()
 
-class FroestGarden:
+class ForestGarden:
     # 管理游戏的类
     def __init__(self):
         # 初始化游戏
@@ -36,14 +40,17 @@ class FroestGarden:
         self.emotes_group = pygame.sprite.Group()
         # 碰撞精灵组
         self.collision_sprites = pygame.sprite.Group()
-        # 游戏状态 1为界面状态，2为游戏状态
+        # 游戏状态 1为界面状态，2为游戏状态, 0为结束状态
         self.game_state = 1
-        # NEW player的初始化被放入setup函数中
+        # player的初始化被放入setup函数中
         self.player = None
-        # NEW 土地网格，在setup中初始化
+        # 土地网格，在setup中初始化
         self.soil_layer = None
         # 树的精灵组
         self.tree_sprites = pygame.sprite.Group()
+        # 雨天
+        self.if_rain = False
+        self.rain = Rain(self.all_sprites)
         # 增加地图
         self.setup()
 
@@ -105,7 +112,14 @@ class FroestGarden:
                 self.run_Plants(current_season, self.all_sprites)
                 self.player.update_to_camera()
                 self.update_screen()
+
                 # 获取游戏运行的时间
+
+                # 判断是否启用下雨
+                if self.if_rain:
+                    self.rain.update()
+                    self.soil_layer.water_all()
+
 
 
     def update_screen(self):
@@ -132,10 +146,15 @@ class FroestGarden:
                     self.player.openBackpack()
                 self.player.inventory.display()
                 if need_moveWithMouse:
+
                     self.player.backpack.moveWithMouse(self.player.backpack.item_chose, self.mouse_pos[0],
                                                        self.mouse_pos[1])
 
+
+
+
         pygame.display.flip()
+
 
     def check_event(self):
 
@@ -229,6 +248,7 @@ class FroestGarden:
                 elif event.key == pygame.K_SPACE:
                     movement = []
                     self.player.interaction()
+
                 # 按下P键生成新的'fruittree'实例
                 elif event.key == pygame.K_p:
 
@@ -246,6 +266,10 @@ class FroestGarden:
                     new_plant = Plant('greentree', [self.plant_group, self.all_sprites, self.collision_sprites], pygame.math.Vector2(mouse_x, mouse_y) + self.all_sprites.offset)
                     plant_group.add(new_plant)
                     print('2')
+                #New 增加雨天天气开关
+                elif event.key == pygame.K_r:
+                    self.if_rain ^= True
+
 
             elif event.type == pygame.KEYUP:
                 if (event.key == pygame.K_LEFT or event.key == pygame.K_a) and 2 in movement:
@@ -285,5 +309,5 @@ def season(runtimes):
 
     return cal_season #cal指的是计算出的
 if __name__ == '__main__':
-    game = FroestGarden()
+    game = ForestGarden()
     game.run_game()

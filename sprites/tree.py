@@ -2,6 +2,7 @@ from sprites.generic import Generic
 from sprites.particle import Particle
 import pygame
 from settings import *
+from camera.cameraGroup import CameraGroup
 
 class Tree(Generic):
     def __init__(self, pos, surf, groups, name):
@@ -14,14 +15,18 @@ class Tree(Generic):
         self.health = 3
         self.alive = True
         self.stump_image = pygame.image.load(r"asset\objects\fruitTrees__036.png").convert_alpha()
+        for group in self.groups():
+            if isinstance(group, CameraGroup):
+                self.all_sprites = group
 
     def damage(self):
         if self.alive:
             self.health -= 1
+
             Particle(
                 pos=self.rect.topleft,
                 surf=self.image,
-                groups=self.groups()[1], # self.groups()[1]是all_sprites组
+                groups=self.all_sprites,  # self.groups()[1]是all_sprites组
                 z=LAYERS['fruit']
             )
             if self.health <= 0:

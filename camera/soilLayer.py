@@ -9,21 +9,22 @@ class SoilLayer:
 
         # 耕地的精灵组
         self.soil_sprites = pygame.sprite.Group()
-        # 水地的精灵组
+        # 湿地的精灵组
         self.water_sprites = pygame.sprite.Group()
-        # graphics
+        # 植物的精灵组
+
 
         # 地图网格
         self.grid = None
         self.create_soil_grid()
 
-        # 土壤的rect
-        self.hit_rects = []
-        self.create_hit_rects()
+        # # 土壤的rect
+        # self.hit_rects = []
+        # self.create_hit_rects()
 
 
     def create_soil_grid(self):
-        ground = pygame.image.load(r"asset/map.png")
+        ground = pygame.image.load(r"asset/map.png").convert_alpha()
         # 计算地图总共有多少个网格
         w_tiles, h_tiles = ground.get_width() // TILE_SIZE, ground.get_height() // TILE_SIZE
 
@@ -43,14 +44,14 @@ class SoilLayer:
         for x, y, _ in tmx_data.get_layer_by_name('deep grass').tiles():
             self.grid[y][x].append('D')
 
-    def create_hit_rects(self):
-        for index_row, row in enumerate(self.grid):
-            for index_col, cell in enumerate(row):
-                if 'F' in cell:
-                    x = index_col * TILE_SIZE
-                    y = index_row * TILE_SIZE
-                    rect = pygame.Rect(x, y, TILE_SIZE, TILE_SIZE)
-                    self.hit_rects.append(rect)
+    # def create_hit_rects(self):
+    #     for index_row, row in enumerate(self.grid):
+    #         for index_col, cell in enumerate(row):
+    #             if 'F' in cell:
+    #                 x = index_col * TILE_SIZE
+    #                 y = index_row * TILE_SIZE
+    #                 rect = pygame.Rect(x, y, TILE_SIZE, TILE_SIZE)
+    #                 self.hit_rects.append(rect)
 
     def plough(self, target_point):
         x = int(target_point.x // TILE_SIZE)
@@ -61,10 +62,10 @@ class SoilLayer:
             self.grid[y][x].append('X')
             self.grid[y][x].append(SoilTile(
                 pos=(x * TILE_SIZE, y * TILE_SIZE),
-                surf=pygame.image.load(r"asset\objects\outdoor_64_227.png"),
+                surf=pygame.image.load(r"asset\objects\outdoor_64_227.png").convert_alpha(),
                 groups=[self.all_sprites, self.soil_sprites]
             ))
-        return self.grid[y][x]
+
 
     def water(self, target_point):
         x = int(target_point.x // TILE_SIZE)
@@ -74,11 +75,35 @@ class SoilLayer:
             self.grid[y][x].append('W')
             self.grid[y][x].append(WaterTile(
                 pos=(x * TILE_SIZE, y * TILE_SIZE),
-                surf=pygame.image.load(r"asset\objects\outdoor_64_682.png"),
+                surf=pygame.image.load(r"asset\objects\outdoor_64_682.png").convert_alpha(),
                 groups=[self.all_sprites, self.water_sprites]
             ))
         print('water')
-        return self.grid[y][x]
+
+    def water_all(self):
+        for row_index, row in enumerate(self.grid):
+            for col_index, cell in enumerate(row):
+                if 'X' in cell and 'W' not in cell:
+                    self.grid[row_index][col_index].append('W')
+                    self.grid[row_index][col_index].append(WaterTile(
+                        pos=(col_index * TILE_SIZE, row_index * TILE_SIZE),
+                        surf=pygame.image.load(r"asset\objects\outdoor_64_682.png").convert_alpha(),
+                        groups=[self.all_sprites, self.water_sprites]
+                    ))
+
+    def plant(self, target_point):
+        x = int(target_point.x // TILE_SIZE)
+        y = int(target_point.y // TILE_SIZE)
+        cell = self.grid[y][x]
+        if 'X' in cell:
+            # 创建crop
+            pass
+            if 'D' in cell:
+                # crop的grow属性增加
+                pass
+            if 'W' in cell:
+                # crop的水量增加
+                pass
 
 
 class SoilTile(pygame.sprite.Sprite):
