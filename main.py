@@ -1,5 +1,4 @@
 import pygame.sprite
-
 from UI.interface.mainMenu import MainMenu
 from character.MainCharacter import *
 from character.Item import *
@@ -113,7 +112,10 @@ class FroestGarden:
                 self.player.inventory.display()
                 if need_moveWithMouse:
                     self.player.backpack.moveWithMouse(self.player.backpack.item_chose, self.mouse_pos[0],
-                                                       self.mouse_pos[1])
+                                                      self.mouse_pos[1])
+                #New 获取物品动画
+                if self.player.gainItemAnimating:
+                    self.player.noticeGain(1000, self.player.new_item.num)
 
         pygame.display.flip()
 
@@ -207,6 +209,7 @@ class FroestGarden:
                 #New 交互按键判定
                 elif event.key == pygame.K_SPACE:
                     movement = []
+                    self.player.gainItem(Item("Hoe"))
                     self.player.interaction()
 
             elif event.type == pygame.KEYUP:
