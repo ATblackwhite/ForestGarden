@@ -157,6 +157,8 @@ class ForestGarden:
                 if need_moveWithMouse:
                     self.player.backpack.moveWithMouse(self.player.backpack.item_chose, self.mouse_pos[0],
                                                        self.mouse_pos[1])
+                # New金币显示
+                self.player.goldShow()
 
         pygame.display.flip()
 
@@ -186,13 +188,19 @@ class ForestGarden:
                         self.player.shop.moveChose(0, -1)
                     elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                         self.player.shop.moveChose(0, 1)
-                    elif event.key == pygame.K_b or event.key == pygame.K_ESCAPE:
+                    elif event.key == pygame.K_ESCAPE:
                         self.player.shop.opened = False
                     elif event.key == pygame.K_SPACE:
                         if self.player.shop.state:
                             self.player.shop.sell()
                         else:
                             self.player.shop.buy()
+                #商店页面切换判断
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
+                    self.player.shop.buy_button.checkClick(mouse_pos[0], mouse_pos[1])
+                    self.player.shop.sell_button.checkClick(mouse_pos[0], mouse_pos[1])
+                    
             # 打开背包后的判定
             elif self.player.backpack.opened:
                 need_moveWithMouse = False
@@ -255,9 +263,6 @@ class ForestGarden:
                 elif event.key == pygame.K_TAB:
                     self.player.openBackpack()
                     movement = []
-                elif event.key == pygame.K_b:
-                    movement = []
-                    self.player.openShop()
                 # 物品栏切换判断
                 elif event.key == pygame.K_1:
                     self.player.equipItem(0)
