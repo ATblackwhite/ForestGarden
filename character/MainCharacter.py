@@ -344,7 +344,7 @@ class Backpack:
             desti_space.pushItem(item1)
             temp_space.item = None
             temp_space.occupied = False
-        elif item1.item_name == item2.item_name:
+        elif item1.item_name == item2.item_name and desti_space != item1.space:
             item2.num += item1.num
             item1.space.item = None
             item1.space.occupied = False
