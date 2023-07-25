@@ -7,13 +7,14 @@ class SoilLayer:
     def __init__(self, all_sprites, plant_group):
         # sprite groups
         self.all_sprites = all_sprites
+        # 植物的精灵组
         self.plant_group = plant_group
 
         # 耕地的精灵组
         self.soil_sprites = pygame.sprite.Group()
         # 湿地的精灵组
         self.water_sprites = pygame.sprite.Group()
-        # 植物的精灵组
+
 
 
         # 地图网格

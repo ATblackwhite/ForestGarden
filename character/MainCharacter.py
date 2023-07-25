@@ -36,12 +36,13 @@ class MainCharacter(pygame.sprite.Sprite):
 
 
     #New
-    def __init__(self, map_width, map_height, screen, pos, group, collision_group, soil_layer, tree_sprite):
+    def __init__(self, map_width, map_height, screen, pos, group, collision_group, soil_layer, tree_sprite, trader):
 
         super().__init__(group)
         self.collision_group = collision_group
         self.tree_group = tree_sprite
         self.map_grid = soil_layer
+        self.trader = trader
 
         self.map_width = map_width
         self.map_height = map_height

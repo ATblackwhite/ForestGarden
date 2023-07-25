@@ -78,18 +78,18 @@ class ForestGarden:
         # 边缘空气墙
         for x, y, surf in tmx_data.get_layer_by_name('collision').tiles():
             Generic(pos=(x * TILE_SIZE, y * TILE_SIZE), surf=pygame.Surface((TILE_SIZE, TILE_SIZE)), groups= self.collision_sprites)
-        #
+
         # 读取地图的开始点并设置人物坐标为此坐标
         for obj in tmx_data.get_layer_by_name('objects'):
             if obj.name == 'start':
                 start = obj
             if obj.name == 'robot':
-                Generic(pos=(obj.x, obj.y), surf=pygame.transform.scale(pygame.image.load('asset/objects/robot..png').convert_alpha(), (64, 64)), groups= [self.all_sprites, self.collision_sprites])
+                trader = Generic(pos=(obj.x, obj.y), surf=pygame.transform.scale(pygame.image.load('asset/objects/robot..png').convert_alpha(), (64, 64)), groups= [self.all_sprites, self.collision_sprites])
 
         # 土地网格初始化New 移动位置
         self.soil_layer = SoilLayer(self.all_sprites, self.plant_group)
         # 添加人物#New新添参数
-        self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (start.x, start.y), self.all_sprites, self.collision_sprites, self.soil_layer, self.tree_sprites)
+        self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (start.x, start.y), self.all_sprites, self.collision_sprites, self.soil_layer, self.tree_sprites, trader)
         #New 初始道具
         self.player.gainItem(Item("Hoe"))
         self.player.gainItem(Item("Axe"))
