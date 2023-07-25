@@ -2,7 +2,7 @@ import os
 import pygame
 import sys
 import re
-from settings import PLANT_ATTRIBUTE,LAYERS
+from settings import PLANT_ATTRIBUTE, LAYERS
 from sprites.generic import Generic
 
 # def import_folder(folder_path):
@@ -52,7 +52,7 @@ class Plant(pygame.sprite.Sprite):
         self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.8, -self.rect.height * 0.8)
         self.hitbox.bottom = self.rect.bottom
 
-    def update(self,current_season):
+    def update_plant(self, current_season):
         # 更新植物的生长状态和图像
         self.growth += self.grow_speed
         if self.growth < 1:

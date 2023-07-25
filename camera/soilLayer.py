@@ -1,11 +1,13 @@
 import pygame
 from settings import *
 from pytmx.util_pygame import load_pygame
+from sprites.plants import Plant
 
 class SoilLayer:
-    def __init__(self, all_sprites):
+    def __init__(self, all_sprites, plant_group):
         # sprite groups
         self.all_sprites = all_sprites
+        self.plant_group = plant_group
 
         # 耕地的精灵组
         self.soil_sprites = pygame.sprite.Group()
@@ -50,7 +52,6 @@ class SoilLayer:
     def plough(self, target_point):
         x = int(target_point.x // TILE_SIZE)
         y = int(target_point.y // TILE_SIZE)
-        # print(x, y)
         self.plough_sound.play()
         cell = self.grid[y][x]
         if 'F' in cell and 'X' not in cell:
@@ -60,6 +61,7 @@ class SoilLayer:
                 surf=pygame.image.load(r"asset\objects\outdoor_64_227.png").convert_alpha(),
                 groups=[self.all_sprites, self.soil_sprites]
             ))
+        print('plough')
 
 
     def water(self, target_point):
@@ -87,19 +89,18 @@ class SoilLayer:
                         groups=[self.all_sprites, self.water_sprites]
                     ))
 
-    def plant(self, target_point):
+    def plant(self, target_point, plant_type):
         x = int(target_point.x // TILE_SIZE)
         y = int(target_point.y // TILE_SIZE)
         cell = self.grid[y][x]
-        if 'X' in cell:
-            # 创建crop
-            pass
-            if 'D' in cell:
-                # crop的grow属性增加
-                pass
-            if 'W' in cell:
-                # crop的水量增加
-                pass
+        if 'X' in cell and 'P' not in cell:
+            # 创建plant
+            self.grid[y][x].append('P')
+            plant = Plant(plant_type, [self.all_sprites, self.plant_group], (x * TILE_SIZE, y * TILE_SIZE))
+            self.grid[y][x].appemd(plant)
+            return True
+        return False
+
 
 
 class SoilTile(pygame.sprite.Sprite):

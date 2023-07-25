@@ -10,7 +10,7 @@ from sprites.tree import Tree
 from pytmx.util_pygame import load_pygame
 from camera.soilLayer import SoilLayer
 
-from sprites.plants import Plant,Emotes
+from sprites.plants import Plant, Emotes
 
 from UI.rain import Rain
 
@@ -80,9 +80,11 @@ class ForestGarden:
         for obj in tmx_data.get_layer_by_name('objects'):
             if obj.name == 'start':
                 start = obj
+            if obj.name == 'robot':
+                Generic(pos=(obj.x, obj.y), surf=pygame.transform.scale(pygame.image.load('asset/objects/robot..png').convert_alpha(), (64, 64)), groups= [self.all_sprites, self.collision_sprites])
 
         # 土地网格初始化New 移动位置
-        self.soil_layer = SoilLayer(self.all_sprites)
+        self.soil_layer = SoilLayer(self.all_sprites, self.plant_group)
         # 添加人物#New新添参数
         self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (start.x, start.y), self.all_sprites, self.collision_sprites, self.soil_layer, self.tree_sprites)
         #New 初始道具
@@ -132,9 +134,9 @@ class ForestGarden:
             # 渲染精灵组中所有的精灵
             self.all_sprites.custom_draw(self.player)
             self.all_sprites.update()
-            # self.plant_group.draw(self.screen)
             global current_season
-            self.plant_group.update(current_season)
+            for plant in self.plant_group:
+                plant.update_plant(current_season)
             # 低层环境人物绘制
             global need_moveWithMouse
             global movement
@@ -152,9 +154,6 @@ class ForestGarden:
                 if need_moveWithMouse:
                     self.player.backpack.moveWithMouse(self.player.backpack.item_chose, self.mouse_pos[0],
                                                        self.mouse_pos[1])
-
-
-
 
         pygame.display.flip()
 
