@@ -37,12 +37,13 @@ class MainCharacter(pygame.sprite.Sprite):
     gold = 100
 
     # New
-    def __init__(self, map_width, map_height, screen, pos, group, collision_group, soil_layer, tree_sprite):
+    def __init__(self, map_width, map_height, screen, pos, group, collision_group, soil_layer, tree_sprite, trader):
 
         super().__init__(group)
         self.collision_group = collision_group
         self.tree_group = tree_sprite
         self.map_grid = soil_layer
+        self.trader = trader
 
         self.map_width = map_width
         self.map_height = map_height
@@ -218,6 +219,9 @@ class MainCharacter(pygame.sprite.Sprite):
         self.interaction_point = pygame.math.Vector2(self.interaction_point_x, self.interaction_point_y)
         if self.equiped_item != None:
             self.equiped_item.item_use(self.interaction_point)
+        else:
+            if self.trader.rect.collidepoint(self.interaction_point):
+                self.openShop()
 
     def useItemAnimate(self, item_name, duration=200):
         self.item_animating = True
