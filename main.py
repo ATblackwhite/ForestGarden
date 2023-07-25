@@ -130,7 +130,7 @@ class ForestGarden:
         elif self.game_state == 2:
             # 渲染精灵组中所有的精灵
             self.all_sprites.custom_draw(self.player)
-            # self.all_sprites.update()
+            self.all_sprites.update()
             # self.plant_group.draw(self.screen)
             global current_season
             self.plant_group.update(current_season)
@@ -268,7 +268,7 @@ class ForestGarden:
                     print('2')
                 #New 增加雨天天气开关
                 elif event.key == pygame.K_r:
-                    self.if_rain ^= True
+                    self.if_rain = not self.if_rain
 
 
             elif event.type == pygame.KEYUP:

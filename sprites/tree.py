@@ -19,10 +19,12 @@ class Tree(Generic):
             if isinstance(group, CameraGroup):
                 self.all_sprites = group
 
+        self.axe_sound = pygame.mixer.Sound('asset/audio/砍树.mp3')
+
     def damage(self):
         if self.alive:
             self.health -= 1
-
+            self.axe_sound.play()
             Particle(
                 pos=self.rect.topleft,
                 surf=self.image,

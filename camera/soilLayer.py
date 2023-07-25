@@ -18,9 +18,11 @@ class SoilLayer:
         self.grid = None
         self.create_soil_grid()
 
-        # # 土壤的rect
-        # self.hit_rects = []
-        # self.create_hit_rects()
+        # 耕地音效
+        self.plough_sound = pygame.mixer.Sound('asset/audio/锄地.mp3')
+        # 浇水音效
+        self.water_sound = pygame.mixer.Sound('asset/audio/浇水.mp3')
+
 
 
     def create_soil_grid(self):
@@ -44,19 +46,12 @@ class SoilLayer:
         for x, y, _ in tmx_data.get_layer_by_name('deep grass').tiles():
             self.grid[y][x].append('D')
 
-    # def create_hit_rects(self):
-    #     for index_row, row in enumerate(self.grid):
-    #         for index_col, cell in enumerate(row):
-    #             if 'F' in cell:
-    #                 x = index_col * TILE_SIZE
-    #                 y = index_row * TILE_SIZE
-    #                 rect = pygame.Rect(x, y, TILE_SIZE, TILE_SIZE)
-    #                 self.hit_rects.append(rect)
 
     def plough(self, target_point):
         x = int(target_point.x // TILE_SIZE)
         y = int(target_point.y // TILE_SIZE)
         # print(x, y)
+        self.plough_sound.play()
         cell = self.grid[y][x]
         if 'F' in cell and 'X' not in cell:
             self.grid[y][x].append('X')
@@ -71,6 +66,7 @@ class SoilLayer:
         x = int(target_point.x // TILE_SIZE)
         y = int(target_point.y // TILE_SIZE)
         cell = self.grid[y][x]
+        self.water_sound.play()
         if 'X' in cell and 'W' not in cell:
             self.grid[y][x].append('W')
             self.grid[y][x].append(WaterTile(
