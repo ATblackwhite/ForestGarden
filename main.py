@@ -53,6 +53,9 @@ class ForestGarden:
         self.rain = Rain(self.all_sprites)
         # 增加地图
         self.setup()
+        # 增加BGM
+        self.bgm = pygame.mixer.Sound('asset/audio/恬静的小乡村   自然声 吉他BGM - 1.Ι 风景优美 阳光明媚的下午 Ι 安静祥和的乡村氛围(Av550320855,P1).mp3')
+        self.bgm.play(loops=-1)
 
 
     def setup(self):
