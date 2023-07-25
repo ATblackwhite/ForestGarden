@@ -4,15 +4,15 @@ from sprites.generic import *
 from sprites.tree import *
 from settings import *
 from camera.cameraGroup import *
+from character.Item import *
+
 
 class MainCharacter(pygame.sprite.Sprite):
-
     width = 31
     height = 36
 
-
     movement = []
-    #New
+    # New
     direct_move = {
         0: (0, -1),
         1: (0, 1),
@@ -34,8 +34,8 @@ class MainCharacter(pygame.sprite.Sprite):
     equiped_item = None
     new_item = None
 
+    gold = 100
 
-    #New
     def __init__(self, map_width, map_height, screen, pos, group, collision_group, soil_layer, tree_sprite, trader):
 
         super().__init__(group)
@@ -50,13 +50,14 @@ class MainCharacter(pygame.sprite.Sprite):
         self.loadAnimation()
         self.ownBackpack(Backpack(self))
         self.ownInventory(Inventory(self))
+        self.ownShop(Shop(self))
         self.pos = pos
         self.posx, self.posy = pos
-        #New
+        # New
         self.interaction_point_x = self.posx + self.width / 2 + self.direct_move[self.direction][0] * self.width * 2
         self.interaction_point_y = self.posy + self.height / 2 + self.direct_move[self.direction][1] * self.height * 2
 
-        #New
+        # New
         if self.item_animating:
             status = self.equiped_item.item_name + str(self.direction)
             self.image = self.item_ani[status][self.ani_frame]
@@ -65,7 +66,6 @@ class MainCharacter(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=pos)
         self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.8, -self.rect.height * 0.75)
         self.rect = self.image.get_rect(center=pos)
-
 
     def update_to_camera(self):
         if self.item_animating:
@@ -79,14 +79,14 @@ class MainCharacter(pygame.sprite.Sprite):
         self.z = LAYERS['main']
 
     # 行走动画
-    def move_animate(self, direction, duration = 150):
+    def move_animate(self, direction, duration=150):
         current_time = pygame.time.get_ticks()
         if not (direction == self.direction):
             self.move_frame = 0
             self.direction = direction
         if (current_time - self.animate_start_time) >= duration:
             self.move_frame += 1
-            self.move_frame = self.move_frame% len(self.animate[self.direction])
+            self.move_frame = self.move_frame % len(self.animate[self.direction])
             self.moving = False
 
     # 坐标变化
@@ -146,6 +146,14 @@ class MainCharacter(pygame.sprite.Sprite):
     def openBackpack(self):
         self.backpack.display()
 
+    def ownShop(self, shop):
+        self.shop = shop
+        self.shop.createBuy()
+        self.shop.createSell()
+
+    def openShop(self):
+        self.shop.display()
+
     def gainItem(self, item):
         space_left = False
         for i in self.backpack.space_list:
@@ -179,38 +187,42 @@ class MainCharacter(pygame.sprite.Sprite):
         else:
             print("NO Space left")
 
-
     def equipItem(self, equip_num):
-        self.inventory.moveChose(equip_num)
-        if equip_num != self.equiped_num:
-            self.equiped_num = equip_num
-            self.equiped_item = self.inventory.hand_list[self.equiped_num].item
-        else:
-            self.equiped_num = -1
-            self.equiped_item = None
+        if equip_num in range(5):
+            self.inventory.moveChose(equip_num)
+            if equip_num != self.equiped_num:
+                self.equiped_num = equip_num
+                self.equiped_item = self.inventory.hand_list[self.equiped_num].item
+            else:
+                self.equiped_num = -1
+                self.equiped_item = None
 
-    def noticeGain(self, duration = 1000, num = 1):
+    def noticeGain(self, duration=1000, num=1):
         self.gainItemAnimating = True
 
         current_time = pygame.time.get_ticks()
         font = pygame.font.Font(size=48)
         number = font.render(str('x' + str(num)), True, (0, 0, 0))
 
-        self.screen.blit(self.new_item.icon_backpack, ((SCREEN_WIDTH-self.width)/2 - 50, (SCREEN_HEIGHT-self.height)/2 - 100))
-        self.screen.blit(number, ((SCREEN_WIDTH-self.width)/2+30, (SCREEN_HEIGHT-self.height)/2 - 50))
+        self.screen.blit(self.new_item.icon_backpack,
+                         ((SCREEN_WIDTH - self.width) / 2 - 50, (SCREEN_HEIGHT - self.height) / 2 - 100))
+        self.screen.blit(number, ((SCREEN_WIDTH - self.width) / 2 + 30, (SCREEN_HEIGHT - self.height) / 2 - 50))
 
         if (current_time - self.notice_start_time) >= duration:
             self.gainItemAnimating = False
 
-    #New
+    # New
     def interaction(self):
-        self.interaction_point_x = self.posx+self.width/2 + self.direct_move[self.direction][0]*self.width*2
+        self.interaction_point_x = self.posx + self.width / 2 + self.direct_move[self.direction][0] * self.width * 2
         self.interaction_point_y = self.posy + self.height / 2 + self.direct_move[self.direction][1] * self.height * 2
         self.interaction_point = pygame.math.Vector2(self.interaction_point_x, self.interaction_point_y)
         if self.equiped_item != None:
             self.equiped_item.item_use(self.interaction_point)
+        else:
+            if self.trader.rect.collidepoint(self.interaction_point):
+                self.openShop()
 
-    def useItemAnimate(self, item_name, duration = 200):
+    def useItemAnimate(self, item_name, duration=200):
         self.item_animating = True
 
         if not self.item_frame_animating:
@@ -220,13 +232,19 @@ class MainCharacter(pygame.sprite.Sprite):
 
         if (current_time - self.animate_start_time) >= duration:
             self.item_frame_animating = False
-            self.ani_frame+=1
+            self.ani_frame += 1
 
         item_ani_group = self.item_ani[item_name]
         if self.ani_frame == len(item_ani_group[self.direction]):
             self.item_animating = False
             self.ani_frame = 0
 
+    def goldShow(self):
+        background = pygame.transform.scale(pygame.image.load('sources/UI/UIPack/PNG/yellow_button13.png'), (200, 60))
+        font = pygame.font.Font(size=48)
+        text = font.render(str(self.gold), True, (0, 0, 0))
+        self.screen.blit(background, (1370, 30))
+        self.screen.blit(text, (1450, 42))
 
     # 前置加载
     def loadAnimation(self):
@@ -235,19 +253,22 @@ class MainCharacter(pygame.sprite.Sprite):
         for i in range(4):
             self.animate.append([])
             for j in range(4):
-                if i*4+j+1 < 10:
-                    route = 'sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_00'+str(i*4+j+1)+'.png'
+                if i * 4 + j + 1 < 10:
+                    route = 'sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_00' + str(
+                        i * 4 + j + 1) + '.png'
                 else:
-                    route = 'sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_0' + str(i * 4 + j+1) + '.png'
+                    route = 'sources/Character/CatCharacter/Walk/Basic Charakter Spritesheet_0' + str(
+                        i * 4 + j + 1) + '.png'
                 self.animate[i].append(pygame.transform.scale(pygame.image.load(route), (200, 200)))
 
         # 道具使用动画
-        #Pot
+        # Pot
         self.item_ani["Pot"] = []
         for i in range(4):
             self.item_ani["Pot"].append([])
             for j in range(2):
-                route = 'sources/Character/CatCharacter/Item_Use/Basic Charakter Actions_0'+ str(i*2+j+1+16) +'.png'
+                route = 'sources/Character/CatCharacter/Item_Use/Basic Charakter Actions_0' + str(
+                    i * 2 + j + 1 + 16) + '.png'
                 self.item_ani["Pot"][i].append(pygame.transform.scale(pygame.image.load(route), (200, 200)))
 
         # Axe
@@ -269,7 +290,7 @@ class MainCharacter(pygame.sprite.Sprite):
             self.item_ani["Hoe"].append([])
             for j in range(2):
                 route = 'sources/Character/CatCharacter/Item_Use/Basic Charakter Actions_00' + str(
-                    i * 2 + j + 1 ) + '.png'
+                    i * 2 + j + 1) + '.png'
                 self.item_ani["Hoe"][i].append(pygame.transform.scale(pygame.image.load(route), (200, 200)))
 
 
@@ -354,6 +375,9 @@ class Backpack:
             item2.space.pushItem(item1)
             temp_space.pushItem(item2)
         self.display()
+        temp = self.player.equiped_num
+        self.player.equipItem(self.player.equiped_num)
+        self.player.equipItem(temp)
 
 
 class BackSpace:
@@ -376,10 +400,10 @@ class BackSpace:
 
     def pushItem(self, item):
         self.item = item
-        item.presentInBackPack(self, True)
+        item.presentInBackPack(self)
         self.occupied = True
 
-    def addItem(self, num = 1):
+    def addItem(self, num=1):
         self.item.num += num
 
     def display(self):
@@ -438,7 +462,7 @@ class HandSpace(BackSpace):
 
     def pushItem(self, item):
         self.item = item
-        item.presentInBackPack(self, False)
+        item.presentInBackPack(self)
         self.occupied = True
 
     def display(self):
@@ -448,3 +472,110 @@ class HandSpace(BackSpace):
             self.backpack.player.screen.blit(self.normal_img, (self.posx, self.posy))
         if self.item != None:
             self.item.display(1)
+
+
+#Shop
+class Shop(Backpack):
+    def __init__(self, player):
+        super(Shop, self).__init__(player)
+
+    background = pygame.image.load('sources/UI/UIPack/PNG/grey_button02.png')
+    backpack_background = pygame.transform.scale(background, (1200, 700))
+    state = 0
+    posy = 20
+
+    buy_list = []
+    item_for_sell = ["Axe", "Pot", "Hoe", "Seed_01", "Seed_02", "Seed_03"]
+    sell_list = []
+
+    def createBuy(self):
+        for i in range(6):
+            self.buy_list.append(BuySpace(i, 0, self))
+            self.buy_list[i].item = Item(self.item_for_sell[i])
+        self.buy_list[0].choosed = True
+
+    def createSell(self):
+        for i in range(self.space_row):
+            self.sell_list.append([])
+            for j in range(self.space_column):
+                self.sell_list[i].append(self.player.backpack.space_list[i][j])
+        self.sell_list[0][0].choosed = True
+
+    def display(self):
+        self.opened = True
+        self.player.screen.blit(self.backpack_background, (self.posx, self.posy))
+        if self.state:
+            for i in self.sell_list:
+                for j in i:
+                    j.display()
+        else:
+            for i in self.buy_list:
+                i.display()
+
+    def moveChose(self, dy, dx):
+        if self.state:
+            if (0 <= (self.choosed_x + dx) < 4) and (0 <= (self.choosed_y + dy) < 5):
+                self.sell_list[self.choosed_x][self.choosed_y].choosed = False
+                self.choosed_x += dx
+                self.choosed_y += dy
+                self.sell_list[self.choosed_x][self.choosed_y].choosed = True
+        else:
+            if (0 <= (self.choosed_x + dx) < len(self.buy_list)):
+                self.buy_list[self.choosed_x].choosed = False
+                self.choosed_x += dx
+                self.buy_list[self.choosed_x].choosed = True
+
+    def buy(self):
+        if self.player.gold >= self.buy_list[self.choosed_x].item.cost:
+            self.player.gold -= self.buy_list[self.choosed_x].item.cost
+            self.player.gainItem(Item(self.buy_list[self.choosed_x].item.item_name))
+        else:
+            print("No enough gold")
+
+    def sell(self):
+        if self.sell_list[self.choosed_x][self.choosed_y].item != None:
+            self.player.gold += self.sell_list[self.choosed_x][self.choosed_y].item.worth
+            self.sell_list[self.choosed_x][self.choosed_y].item.num -= 1
+
+    def showDetail(self, item):
+        if item != None:
+            show_img = pygame.transform.scale(item.icon, (200, 200))
+            self.player.screen.blit(show_img, (720 + self.posx, 40 + self.posy))
+            displayText(item.description, self.player.screen, 60, 720 + self.posx, 60 + self.posy + 200)
+            if self.state:
+                evaluate = "Worth:" + str(item.worth)
+            else:
+                evaluate = "Cost:" + str(item.cost)
+            displayText(evaluate, self.player.screen, 60, 720 + self.posx, self.posy+600-60)
+
+
+
+class BuySpace(BackSpace):
+    def __init__(self, x, y, shop):
+        super(BuySpace, self).__init__(x, y, shop)
+        self.width = 450
+        self.height = 80
+        self.posx = 250
+        self.posy = (self.height+20)*x + 80
+        self.normal_img = pygame.transform.scale(pygame.image.load('sources/UI/UIPack/PNG/grey_button14.png'), (self.width, self.height))
+        self.chosen_img = pygame.transform.scale(pygame.image.load('sources/UI/UIPack/PNG/red_button10.png'), (self.width, self.height))
+
+    def display(self):
+        if self.choosed:
+            self.backpack.showDetail(self.item)
+            self.backpack.player.screen.blit(self.chosen_img, (self.posx, self.posy))
+        else:
+            self.backpack.player.screen.blit(self.normal_img, (self.posx, self.posy))
+        if self.item != None:
+            self.item.display_without_player(self.backpack.player.screen, 0, self.posx+20, self.posy-20)
+            displayText(self.item.item_name, self.backpack.player.screen, 60, self.posx + 120, self.posy+40)
+
+
+
+class ShopButton:
+    def __init__(self, posx, posy, text):
+        self.posx = posx
+        self.posy = posy
+        self.height = 100
+        self.width = 200
+        self.text = text[:]

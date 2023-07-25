@@ -143,7 +143,7 @@ class ForestGarden:
             # 低层环境人物绘制
             global need_moveWithMouse
             global movement
-            #New 删除了人物display的部分 避免重复绘制
+            #删除了人物display的部分 避免重复绘制
             if len(movement) != 0:
                 self.player.move_by_dire(movement[len(movement) - 1])
             # 最高层UI绘制
@@ -175,6 +175,24 @@ class ForestGarden:
             #New 人物动画中不交互
             if self.player.item_animating:
                 continue
+            #打开商店页面后的判定
+            elif self.player.shop.opened:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                        self.player.shop.moveChose(-1, 0)
+                    elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                        self.player.shop.moveChose(1, 0)
+                    elif event.key == pygame.K_UP or event.key == pygame.K_w:
+                        self.player.shop.moveChose(0, -1)
+                    elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                        self.player.shop.moveChose(0, 1)
+                    elif event.key == pygame.K_b or event.key == pygame.K_ESCAPE:
+                        self.player.shop.opened = False
+                    elif event.key == pygame.K_SPACE:
+                        if self.player.shop.state:
+                            self.player.shop.sell()
+                        else:
+                            self.player.shop.buy()
             # 打开背包后的判定
             elif self.player.backpack.opened:
                 need_moveWithMouse = False
@@ -221,7 +239,6 @@ class ForestGarden:
                     self.main_menu.play_button.check_button(self, mouse_pos)
 
             # 键盘按键判定
-            # 键盘按键判定
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     movement.append(2)
@@ -238,6 +255,9 @@ class ForestGarden:
                 elif event.key == pygame.K_TAB:
                     self.player.openBackpack()
                     movement = []
+                elif event.key == pygame.K_b:
+                    movement = []
+                    self.player.openShop()
                 # 物品栏切换判断
                 elif event.key == pygame.K_1:
                     self.player.equipItem(0)
