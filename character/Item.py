@@ -20,6 +20,7 @@ class Item:
         self.description = self.description_line.read()
         self.handled = False
         self.chosen = False
+        self.num = 1
 
     def presentInBackPack(self, space, isBackpack):
         self.space = space
@@ -32,8 +33,15 @@ class Item:
 
         self.player = self.space.backpack.player
 
-    def display(self):
+    def display(self, isInventory):
         self.player.screen.blit(self.icon, (self.posx, self.posy))
+        if self.num > 1:
+            font = pygame.font.Font('sources/UI/UIPack/Font/kenvector_future.ttf', 24)
+            number = font.render(str(self.num), True, (0, 0, 0))
+            if isInventory:
+                self.player.screen.blit(number, (self.posx+50-20, self.posy+50-20))
+            else:
+                self.player.screen.blit(number, (self.posx+80-15, self.posy+80-25))
 
     #New
     def item_use(self, interaction_point):
@@ -50,6 +58,9 @@ class Item:
                 for i in self.player.tree_group:
                     if i.rect.collidepoint(self.player.interaction_point):
                         i.damage()
-                #for i in self.player
 
                 self.player.useItemAnimate(self.item_name)
+
+        if "Seed" in self.item_name:
+            seed_ID = self.item_name.split('_')[1]
+
