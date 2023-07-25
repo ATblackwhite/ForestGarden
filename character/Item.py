@@ -51,6 +51,8 @@ class Item:
         self.screen = self.player.screen
 
     def display(self, isInventory):
+        self.posx = self.space.posx + 6
+        self.posy = self.space.posy
         if isInventory:
             self.screen.blit(self.icon_inventory, (self.posx, self.posy))
         else:
@@ -67,13 +69,23 @@ class Item:
         self.screen = screen
         self.posx = posx
         self.posy = posy
-        self.display(isInventory)
+        if isInventory:
+            self.screen.blit(self.icon_inventory, (self.posx, self.posy))
+        else:
+            self.screen.blit(self.icon_backpack, (self.posx, self.posy))
+        if self.num > 1:
+            font = pygame.font.Font('sources/UI/UIPack/Font/kenvector_future.ttf', 24)
+            number = font.render(str(self.num), True, (0, 0, 0))
+            if isInventory:
+                self.screen.blit(number, (self.posx + 50 - 20, self.posy + 50 - 20))
+            else:
+                self.screen.blit(number, (self.posx + 80 - 15, self.posy + 80 - 25))
 
     def decrease(self):
         self.num -= 1
         if self.num <= 0:
             self.space.item = None
-            self.space = None
+            self.space.occupied = False
 
     #New
     def item_use(self, interaction_point):

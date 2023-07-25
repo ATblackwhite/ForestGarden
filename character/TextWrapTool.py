@@ -1,8 +1,11 @@
 import pygame
 
-def displayText(txt, screen, height, start_x, start_y):
+def displayText(txt, screen, height, start_x, start_y, size=24, Font='sources/UI/UIPack/Font/kenvector_future.ttf'):
     text = txt[:]
-    font = pygame.font.Font('sources/UI/UIPack/Font/kenvector_future.ttf', 24)
+    if Font == "":
+        font = pygame.font.Font(size=size)
+    else:
+        font = pygame.font.Font(Font, size=size)
     line_number = 0
     for i in text.split('\n'):
         line = font.render(i, True, (0, 0, 0))

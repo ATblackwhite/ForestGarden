@@ -324,8 +324,8 @@ class Backpack:
     def showDetail(self, item):
         if item != None:
             show_img = pygame.transform.scale(item.icon, (200, 200))
-            self.player.screen.blit(show_img, (720 + self.posx, 40 + self.posy))
-            displayText(item.description, self.player.screen, 60, 720 + self.posx, 60 + self.posy + 200)
+            self.player.screen.blit(show_img, (720 + self.space_list[0][0].posx, self.space_list[0][0].posy))
+            displayText(item.description, self.player.screen, 60, 720 + self.space_list[0][0].posx, 60 + self.space_list[0][0].posy + 200)
 
     def display(self):
         self.opened = True
@@ -415,6 +415,22 @@ class BackSpace:
         if self.item != None:
             self.item.display(0)
 
+    def display_by_position(self, posx, posy):
+        pre_posx = self.posx
+        pre_posy = self.posy
+        self.posx = posx
+        self.posy = posy
+        if self.choosed:
+            self.backpack.player.shop.showDetail(self.item)
+            self.backpack.player.screen.blit(self.chosen_img, (posx, posy))
+        else:
+            self.backpack.player.screen.blit(self.normal_img, (posx, posy))
+        if self.item != None:
+            self.item.display(0)
+
+        self.posx = pre_posx
+        self.posy = pre_posy
+
     def ifMouseChose(self, mouse_x, mouse_y):
         if self.posx <= mouse_x < self.posx + self.width and self.posy <= mouse_y <= self.posy + self.height:
             return True
@@ -477,16 +493,22 @@ class HandSpace(BackSpace):
 #Shop
 class Shop(Backpack):
     def __init__(self, player):
-        super(Shop, self).__init__(player)
+        self.player = player
+        self.buy_button = ShopButton(self.posx + self.width+50, self.posy + 100, "Buy", self)
+        self.sell_button = ShopButton(self.posx + self.width+50, self.posy + 400, "Sell", self)
 
+    width = 1300
+    height = 700
     background = pygame.image.load('sources/UI/UIPack/PNG/grey_button02.png')
-    backpack_background = pygame.transform.scale(background, (1200, 700))
+    backpack_background = pygame.transform.scale(background, (width, height))
     state = 0
     posy = 20
+    posx = 50
 
     buy_list = []
     item_for_sell = ["Axe", "Pot", "Hoe", "Seed_01", "Seed_02", "Seed_03"]
     sell_list = []
+
 
     def createBuy(self):
         for i in range(6):
@@ -507,10 +529,13 @@ class Shop(Backpack):
         if self.state:
             for i in self.sell_list:
                 for j in i:
-                    j.display()
+                    j.display_by_position(j.posx-90, j.posy-30)
         else:
             for i in self.buy_list:
                 i.display()
+
+        self.buy_button.display()
+        self.sell_button.display()
 
     def moveChose(self, dy, dx):
         if self.state:
@@ -535,18 +560,21 @@ class Shop(Backpack):
     def sell(self):
         if self.sell_list[self.choosed_x][self.choosed_y].item != None:
             self.player.gold += self.sell_list[self.choosed_x][self.choosed_y].item.worth
-            self.sell_list[self.choosed_x][self.choosed_y].item.num -= 1
+            self.sell_list[self.choosed_x][self.choosed_y].item.decrease()
 
     def showDetail(self, item):
         if item != None:
             show_img = pygame.transform.scale(item.icon, (200, 200))
-            self.player.screen.blit(show_img, (720 + self.posx, 40 + self.posy))
-            displayText(item.description, self.player.screen, 60, 720 + self.posx, 60 + self.posy + 200)
+
             if self.state:
+                self.player.screen.blit(show_img, (780 + self.posx, 40 + self.posy))
+                displayText(item.description, self.player.screen, 60, 780 + self.posx, 60 + self.posy + 200)
                 evaluate = "Worth:" + str(item.worth)
             else:
+                self.player.screen.blit(show_img, (720 + self.posx, 40 + self.posy))
+                displayText(item.description, self.player.screen, 60, 720 + self.posx, 60 + self.posy + 200)
                 evaluate = "Cost:" + str(item.cost)
-            displayText(evaluate, self.player.screen, 60, 720 + self.posx, self.posy+600-60)
+            displayText(evaluate, self.player.screen, 60, 780 + self.posx, self.posy+600-60)
 
 
 
@@ -555,8 +583,8 @@ class BuySpace(BackSpace):
         super(BuySpace, self).__init__(x, y, shop)
         self.width = 450
         self.height = 80
-        self.posx = 250
-        self.posy = (self.height+20)*x + 80
+        self.posx = self.backpack.posx+100
+        self.posy = (self.height+20)*x + 70
         self.normal_img = pygame.transform.scale(pygame.image.load('sources/UI/UIPack/PNG/grey_button14.png'), (self.width, self.height))
         self.chosen_img = pygame.transform.scale(pygame.image.load('sources/UI/UIPack/PNG/red_button10.png'), (self.width, self.height))
 
@@ -573,9 +601,46 @@ class BuySpace(BackSpace):
 
 
 class ShopButton:
-    def __init__(self, posx, posy, text):
+    def __init__(self, posx, posy, text, shop):
         self.posx = posx
         self.posy = posy
-        self.height = 100
-        self.width = 200
+        self.shop = shop
+        self.height = 80
+        self.width = 100
         self.text = text[:]
+        self.background_unchosen = pygame.transform.scale(pygame.image.load('sources/UI/UIPack/PNG/grey_button08.png'), (self.width,self.height))
+        self.background_chosen = pygame.transform.scale(pygame.image.load('sources/UI/UIPack/PNG/grey_button09.png'), (self.width, self.height))
+        if self.text == "Buy":
+            self.chosen = True
+        else:
+            self.chosen = False
+
+    def checkClick(self, mouseposx, mouseposy):
+        if self.posx<=mouseposx<=self.posx+self.width and self.posy <= mouseposy <= self.posy+self.height:
+            self.click()
+
+    def click(self):
+        prev_state = self.shop.state
+        if self.text == "Buy":
+            self.shop.state = 0
+            self.shop.sell_button.chosen = False
+            self.shop.buy_button.chosen = True
+        elif self.text == "Sell":
+            self.shop.state = 1
+            self.shop.buy_button.chosen = False
+            self.shop.sell_button.chosen = True
+        if prev_state != self.shop.state:
+            if prev_state == 0:
+                self.shop.buy_list[self.shop.choosed_x].choosed = False
+            else:
+                self.shop.sell_list[self.shop.choosed_x][self.shop.choosed_y].choosed = False
+            self.shop.choosed_x = 0
+            self.shop.choosed_y = 0
+            self.shop.moveChose(0, 0)
+
+    def display(self):
+        if self.chosen:
+            self.shop.player.screen.blit(self.background_chosen, (self.posx, self.posy))
+        else:
+            self.shop.player.screen.blit(self.background_unchosen, (self.posx, self.posy))
+        displayText(self.text, self.shop.player.screen, 60, self.posx+20, self.posy+20, size=48, Font="")
