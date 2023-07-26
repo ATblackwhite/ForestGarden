@@ -144,6 +144,11 @@ class MainCharacter(pygame.sprite.Sprite):
         self.inventory.createHandSpace()
 
     def openBackpack(self):
+        self.backpack.space_list[self.backpack.choosed_x][self.backpack.choosed_y].choosed = False
+        self.shop.sell_list[self.shop.choosed_x][self.shop.choosed_y].choosed = False
+        self.backpack.choosed_x = 0
+        self.backpack.choosed_y = 0
+        self.backpack.space_list[self.backpack.choosed_x][self.backpack.choosed_y].choosed = True
         self.backpack.display()
 
     def ownShop(self, shop):
@@ -152,7 +157,11 @@ class MainCharacter(pygame.sprite.Sprite):
         self.shop.createSell()
 
     def openShop(self):
+        self.shop.sell_list[self.shop.choosed_x][self.shop.choosed_y].choosed = False
         self.backpack.space_list[self.backpack.choosed_x][self.backpack.choosed_y].choosed = False
+        self.shop.choosed_x = 0
+        self.shop.choosed_y = 0
+        self.shop.sell_list[self.shop.choosed_x][self.shop.choosed_y].choosed = True
         self.shop.display()
 
     def gainItem(self, item):
