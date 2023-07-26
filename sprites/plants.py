@@ -200,13 +200,13 @@ class Crop(Plant):
 def update_harvestable(crop):
     harvestable, plant_type = crop.havest()
     if harvestable == 1:
-        print('收获成功，给玩家背包增加一个什么东西')
         bling = Bling(crop.rect.midbottom+pygame.Vector2(50,200),crop.bling_groups,'yellow')
         crop.stagevideo.append(bling)
         crop.fruit = 0
+        return plant_type
         #设置水果度为0
     elif harvestable == 0:
-        print('现在还不能收获')
+        return None
 
 class Emotes(pygame.sprite.Sprite):
     def __init__(self,pos,emo_type,groups):
