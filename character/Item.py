@@ -41,6 +41,9 @@ class Item:
             case "Seed_03":
                 self.cost = 20
                 self.worth = 1
+            case "Wood":
+                self.cost = 50
+                self.worth = 40
 
     def presentInBackPack(self, space):
         self.space = space
@@ -108,12 +111,14 @@ class Item:
                 self.player.useItemAnimate(self.item_name)
 
             case "Axe":
+                tree_death = False
                 for i in self.player.tree_group:
                     if i.rect.collidepoint(self.player.interaction_point):
-                        i.damage()
+                        tree_death = i.damage()
                 #for i in self.player
-
                 self.player.useItemAnimate(self.item_name)
+                if tree_death:
+                    self.player.gainItem(Item("Wood"))
 
         if "Seed" in self.item_name:
 
