@@ -10,5 +10,7 @@ ID_Item_Table = {
     "Seed_02.img": 'sources/Item/Seed_02/crops. (2)_121.png',
     'Seed_02.des': 'sources/Item/Seed_02/Description.txt',
     "Seed_03.img": 'sources/Item/Seed_03/crops. (2)_193.png',
-    'Seed_03.des': 'sources/Item/Seed_03/Description.txt'
+    'Seed_03.des': 'sources/Item/Seed_03/Description.txt',
+    "Wood.img": 'sources/Item/Wood/wood.png',
+    "Wood.des": 'sources/Item/Wood/Description.txt'
 }
