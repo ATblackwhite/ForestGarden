@@ -233,6 +233,10 @@ class MainCharacter(pygame.sprite.Sprite):
                 else:
                     self.trader_met = True
                     self.text_bar_show = True
+            harvest = self.backpack.player.map_grid.harvest(self.interaction_point)
+            if harvest != None:
+                seed_name = "Fruit_" + harvest
+                self.backpack.player.gainItem(Item(seed_name))
 
     def useItemAnimate(self, item_name, duration=200):
         self.item_animating = True

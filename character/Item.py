@@ -96,6 +96,9 @@ class Item:
 
         if "Seed" in self.item_name:
             seed_type = self.item_name.split('_')[1]
-            plant = self.player.map_grid.plant(interaction_point, seed_type)
+            if "tree" in self.item_name:
+                plant = self.player.map_grid.plant_tree(interaction_point, seed_type)
+            else:
+                plant = self.player.map_grid.plant_crop(interaction_point, seed_type)
             if plant:
                 self.decrease()
