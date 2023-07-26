@@ -16,7 +16,7 @@ class TextBar:
         self.dialogue_text = "Hello, I am BT-7274. You     can buy or sell items from me."
 
         # 加载字体
-        self.font = pygame.font.Font(r'C:\Users\16218\Documents\GitHub\ForestGarden\sources\UI\UIPack\Font\kenvector_future.ttf', 30)
+        self.font = pygame.font.Font(r'sources\UI\UIPack\Font\kenvector_future.ttf', 30)
 
         # 分割对话文本为逐句显示
         self.dialogue_lines = [char for char in self.dialogue_text]
