@@ -98,7 +98,7 @@ class SoilLayer:
             # 创建plant
             self.grid[y][x].append('P')
             plant = Plant(plant_type, [self.all_sprites, self.plant_group], (x * TILE_SIZE, y * TILE_SIZE))
-            self.grid[y][x].appemd(plant)
+            self.grid[y][x].append(plant)
             return True
         return False
 

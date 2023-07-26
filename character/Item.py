@@ -92,6 +92,7 @@ class Item:
                 self.player.useItemAnimate(self.item_name)
                 if tree_death:
                     self.player.gainItem(Item("Wood"))
+                    self.player.gainItem(Item("Seed_fruittree"))
 
         if "Seed" in self.item_name:
             seed_type = self.item_name.split('_')[1]
