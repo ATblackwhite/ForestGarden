@@ -14,5 +14,12 @@ ID_Item_Table = {
     'Seed_fruittree.img': 'sources/Item/Seed_fruittree/fruitTrees__001.png',
     'Seed_fruittree.des': 'sources/Item/Seed_fruittree/Description.txt',
     "Wood.img": 'sources/Item/Wood/wood.png',
-    "Wood.des": 'sources/Item/Wood/Description.txt'
+    "Wood.des": 'sources/Item/Wood/Description.txt',
+    "Fruit_tomato.img": 'sources/Item/Fruit_tomato/Crop_Spritesheet_097.png',
+    "Fruit_tomato.des": 'sources/Item/Fruit_tomato/Description.txt',
+    "Fruit_fruittree.img": 'sources/Item/Fruit_fruittree/Crop_Spritesheet_043.png',
+    "Fruit_fruittree.des": 'sources/Item/Fruit_fruittree/Description.txt',
+    "Fruit_corn.img": 'sources/Item/Fruit_corn/Crop_Spritesheet_109.png',
+    "Fruit_corn.des": 'sources/Item/Fruit_corn/Description.txt'
+
 }
