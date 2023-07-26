@@ -251,7 +251,7 @@ class Crop(Plant):
     def havest_ornot(self):
         return (self.harvestable,self.plant_type)
 def update_harvestable(crop):
-    harvestable, plant_type = crop.havest()
+    harvestable, plant_type = crop.havest_ornot()
     if harvestable == 1:
         bling = Bling(crop.rect.midbottom+pygame.Vector2(50,200),crop.bling_groups,'yellow')
         crop.stagevideo.append(bling)
