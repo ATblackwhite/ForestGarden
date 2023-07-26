@@ -4,11 +4,14 @@ from pytmx.util_pygame import load_pygame
 from sprites.plants import Plant
 
 class SoilLayer:
-    def __init__(self, all_sprites, plant_group):
+    def __init__(self, all_sprites, plant_group, collision_sprites):
         # sprite groups
         self.all_sprites = all_sprites
         # 植物的精灵组
         self.plant_group = plant_group
+        # 碰撞的精灵组
+        self.collision_sprites = collision_sprites
+
 
         # 耕地的精灵组
         self.soil_sprites = pygame.sprite.Group()
@@ -97,8 +100,8 @@ class SoilLayer:
         if 'X' in cell and 'P' not in cell:
             # 创建plant
             self.grid[y][x].append('P')
-            plant = Plant(plant_type, [self.all_sprites, self.plant_group], (x * TILE_SIZE, y * TILE_SIZE))
-            self.grid[y][x].append(plant)
+            new_plant = Plant('fruittree', [self.plant_group, self.all_sprites, self.collision_sprites], (x * TILE_SIZE + 30, y * TILE_SIZE + 75))
+            self.grid[y][x].append(new_plant)
             return True
         return False
 

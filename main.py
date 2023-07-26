@@ -92,7 +92,7 @@ class ForestGarden:
                 trader = Generic(pos=(obj.x, obj.y), surf=pygame.transform.scale(pygame.image.load('asset/objects/robot..png').convert_alpha(), (64, 64)), groups= [self.all_sprites, self.collision_sprites])
 
         # 土地网格初始化New 移动位置
-        self.soil_layer = SoilLayer(self.all_sprites, self.plant_group)
+        self.soil_layer = SoilLayer(self.all_sprites, self.plant_group, self.collision_sprites)
         # 添加人物#New新添参数
         self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (start.x, start.y), self.all_sprites, self.collision_sprites, self.soil_layer, self.tree_sprites, trader)
         #New 初始道具
