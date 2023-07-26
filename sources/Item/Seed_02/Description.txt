@@ -1,6 +1,3 @@
-<<<<<<< Updated upstream
 Seed for corn?
-=======
-Seed for corn?
->>>>>>> Stashed changes
 Maybe
+_15_1
