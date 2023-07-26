@@ -2,12 +2,8 @@ import os
 import pygame
 import sys
 import re
-
-from settings import PLANT_ATTRIBUTE, LAYERS
-
 from settings import PLANT_ATTRIBUTE,LAYERS
 from sprites.particle import Particle
-
 from sprites.generic import Generic
 
 # def import_folder(folder_path):
@@ -57,9 +53,6 @@ class Plant(pygame.sprite.Sprite):
         self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.8, -self.rect.height * 0.8)
         self.hitbox.bottom = self.rect.bottom
 
-
-    def update_plant(self, current_season):
-
         #表情：
         self.emotes = []
         self.last_emotes_time = 0  # 记录上一次执行emotes_update()的时间
@@ -74,7 +67,6 @@ class Plant(pygame.sprite.Sprite):
         self.stump_image = pygame.transform.scale(self.stump_origin_image, (120, 240))
 
     def plant_update(self,current_season):
-
         # 更新植物的生长状态和图像
         self.growth += self.grow_speed
         if self.growth < 1:
@@ -120,7 +112,7 @@ class Plant(pygame.sprite.Sprite):
             if self.emotes is not None:
                 for emote in self.emotes:
                     emote.kill()
-            self.image = self.stump_image
+            self.kill()
             # 删除该植物实体
             # for emote in self.emotes:
     def damage(self):
@@ -132,7 +124,7 @@ class Plant(pygame.sprite.Sprite):
                 groups=self.all_sprites,  # self.groups()[1]是all_sprites组
                 z=LAYERS['fruit']
             )
-            if self.health <= 0:
+            if 0<self.life <=200 :
                 self.image = self.stump_image
                 self.rect = self.image.get_rect(midbottom=self.rect.midbottom)
                 self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.9, -self.rect.height * 0.6)
