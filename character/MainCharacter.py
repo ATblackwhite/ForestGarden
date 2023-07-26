@@ -524,9 +524,11 @@ class Shop(Backpack):
     posx = 50
 
     buy_list = []
-    item_for_sell = ["Axe", "Pot", "Hoe", "Seed_01", "Seed_02", "Seed_03"]
+    item_for_sell = ["Axe", "Pot", "Hoe", "Seed_01", "Seed_02", "Seed_03", "Seed_fruittree", "Seed_01", "Seed_02"]
     sell_list = []
 
+    list_head = 0
+    list_tail = 5
 
     def createBuy(self):
         for i in range(6):
@@ -572,10 +574,19 @@ class Shop(Backpack):
                 self.choosed_y += dy
                 self.sell_list[self.choosed_x][self.choosed_y].choosed = True
         else:
-            if (0 <= (self.choosed_x + dx) < len(self.buy_list)):
+            if 0 <= (self.choosed_x + dx) < len(self.buy_list):
                 self.buy_list[self.choosed_x].choosed = False
                 self.choosed_x += dx
                 self.buy_list[self.choosed_x].choosed = True
+            elif (self.choosed_x+dx)<self.list_head and self.list_head-1 >= 0:
+                self.list_head-=1
+                self.list_tail-=1
+            elif 5<(self.choosed_x+dx) and self.list_tail+1 < len(self.item_for_sell):
+                self.list_head+=1
+                self.list_tail+=1
+            for i in range(6):
+                self.buy_list[i].item = Item(self.item_for_sell[i+self.list_head])
+
 
     def buy(self):
         if self.player.gold >= self.buy_list[self.choosed_x].item.cost:
