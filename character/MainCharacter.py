@@ -34,6 +34,9 @@ class MainCharacter(pygame.sprite.Sprite):
     equiped_item = None
     new_item = None
 
+    trader_met = False
+    text_bar_show = False
+
     gold = 100
 
     def __init__(self, map_width, map_height, screen, pos, group, collision_group, soil_layer, tree_sprite, trader):
@@ -144,10 +147,6 @@ class MainCharacter(pygame.sprite.Sprite):
         self.inventory.createHandSpace()
 
     def openBackpack(self):
-        self.backpack.space_list[self.backpack.choosed_x][self.backpack.choosed_y].choosed = False
-        self.shop.sell_list[self.shop.choosed_x][self.shop.choosed_y].choosed = False
-        self.backpack.choosed_x = 0
-        self.backpack.choosed_y = 0
         self.backpack.space_list[self.backpack.choosed_x][self.backpack.choosed_y].choosed = True
         self.backpack.display()
 
@@ -157,11 +156,10 @@ class MainCharacter(pygame.sprite.Sprite):
         self.shop.createSell()
 
     def openShop(self):
-        self.shop.sell_list[self.shop.choosed_x][self.shop.choosed_y].choosed = False
-        self.backpack.space_list[self.backpack.choosed_x][self.backpack.choosed_y].choosed = False
-        self.shop.choosed_x = 0
-        self.shop.choosed_y = 0
-        self.shop.sell_list[self.shop.choosed_x][self.shop.choosed_y].choosed = True
+        if self.shop.state:
+            self.shop.sell_list[self.shop.choosed_x][self.shop.choosed_y].choosed = True
+        else:
+            self.shop.buy_list[self.shop.choosed_x].choosed = True
         self.shop.display()
 
     def gainItem(self, item):
@@ -230,7 +228,11 @@ class MainCharacter(pygame.sprite.Sprite):
             self.equiped_item.item_use(self.interaction_point)
         else:
             if self.trader.rect.collidepoint(self.interaction_point):
-                self.openShop()
+                if self.trader_met:
+                    self.openShop()
+                else:
+                    self.trader_met = True
+                    self.text_bar_show = True
 
     def useItemAnimate(self, item_name, duration=200):
         self.item_animating = True
@@ -257,6 +259,7 @@ class MainCharacter(pygame.sprite.Sprite):
         self.screen.blit(background, (1370, 30))
         self.screen.blit(gold_img, (1390, 35))
         self.screen.blit(text, (1450, 42))
+
 
     # 前置加载
     def loadAnimation(self):
@@ -346,7 +349,10 @@ class Backpack:
             for j in i:
                 j.display()
 
-    def close(self):
+    def closeBackpack(self):
+        self.space_list[self.choosed_x][self.choosed_y].choosed = False
+        self.choosed_x = 0
+        self.choosed_y = 0
         self.opened = False
 
     def moveChose(self, dy, dx):
@@ -548,6 +554,15 @@ class Shop(Backpack):
 
         self.buy_button.display()
         self.sell_button.display()
+
+    def closeShop(self):
+        if self.state:
+            self.sell_list[self.choosed_x][self.choosed_y].choosed = False
+        else:
+            self.buy_list[self.choosed_x].choosed = False
+        self.choosed_x = 0
+        self.choosed_y = 0
+        self.opened = False
 
     def moveChose(self, dy, dx):
         if self.state:

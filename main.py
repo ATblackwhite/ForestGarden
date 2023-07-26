@@ -14,6 +14,7 @@ from camera.soilLayer import SoilLayer
 from sprites.plants import Plant, Emotes
 
 from UI.rain import Rain
+from UI.interface.textBar import TextBar
 
 
 movement = []
@@ -100,6 +101,9 @@ class ForestGarden:
         self.player.gainItem(Item("Pot"))
         self.player.gainItem(Item("Seed_fruittree"))
 
+        #New 初始化聊天框
+        self.trader_text_bar = TextBar(self.screen)
+
 
     def run_game(self):
         # 游戏循环，保证游戏开始运行时不会终止
@@ -176,6 +180,8 @@ class ForestGarden:
                 # New
                 self.player.goldShow()
 
+                if self.player.text_bar_show:
+                    self.trader_text_bar.draw()
 
 
 
@@ -195,7 +201,11 @@ class ForestGarden:
                 pygame.quit()
 
             #New 人物动画中不交互
-            if self.player.item_animating:
+            if self.player.text_bar_show:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        self.player.text_bar_show = False
+            elif self.player.item_animating:
                 continue
             #打开商店页面后的判定
             elif self.player.shop.opened:
@@ -209,7 +219,7 @@ class ForestGarden:
                     elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                         self.player.shop.moveChose(0, 1)
                     elif event.key == pygame.K_ESCAPE:
-                        self.player.shop.opened = False
+                        self.player.shop.closeShop()
                     elif event.key == pygame.K_SPACE:
                         if self.player.shop.state:
                             self.player.shop.sell()
@@ -257,8 +267,8 @@ class ForestGarden:
                         self.player.backpack.moveChose(0, -1)
                     elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                         self.player.backpack.moveChose(0, 1)
-                    elif event.key == pygame.K_TAB:
-                        self.player.backpack.opened = False
+                    elif event.key == pygame.K_TAB or event.key == pygame.K_ESCAPE:
+                        self.player.backpack.closeBackpack()
                         self.player.move(0, 0)
 
             # 鼠标判定
