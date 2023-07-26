@@ -70,7 +70,9 @@ class Item:
         self.num -= 1
         if self.num <= 0:
             self.space.item = None
-            self.space.backpack.player.equipped_item = None
+            temp = self.player.equiped_num
+            self.player.equipItem(self.player.equiped_num)
+            self.player.equipItem(temp)
             self.space.occupied = False
 
     #New
