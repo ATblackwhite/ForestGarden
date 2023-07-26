@@ -1,4 +1,5 @@
 import pygame.sprite
+
 import re  # 添加这一行导入语句
 from UI.interface.mainMenu import MainMenu
 from character.MainCharacter import *
@@ -17,8 +18,8 @@ from UI.rain import Rain
 
 movement = []
 need_moveWithMouse = False
-plant_group = pygame.sprite.Group()
-emotes_group = pygame.sprite.Group()
+# plant_group = pygame.sprite.Group()
+# emotes_group = pygame.sprite.Group()
 
 class ForestGarden:
     # 管理游戏的类
@@ -34,10 +35,13 @@ class ForestGarden:
         # 添加系统时钟
         self.clock = pygame.time.Clock()
         #精灵组
+
         self.all_sprites = CameraGroup()
+
         # 植物组
         self.plant_group = pygame.sprite.Group()
         self.emotes_group = pygame.sprite.Group()
+        # self.all_sprites.add(self.emotes_group)
         # 碰撞精灵组
         self.collision_sprites = pygame.sprite.Group()
         # 游戏状态 1为界面状态，2为游戏状态, 0为结束状态
@@ -138,8 +142,13 @@ class ForestGarden:
             self.all_sprites.custom_draw(self.player)
             self.all_sprites.update()
             global current_season
+
             for plant in self.plant_group:
                 plant.update_plant(current_season)
+
+            self.plant_group.update(current_season)
+            # self.emotes_group.update()
+# >>>>>>> Stashed changes
             # 低层环境人物绘制
             global need_moveWithMouse
             global movement
@@ -147,10 +156,18 @@ class ForestGarden:
             if len(movement) != 0:
                 self.player.move_by_dire(movement[len(movement) - 1])
             # 最高层UI绘制
-                        if self.game_state == 2:
+# <<<<<<< Updated upstream
+            if self.game_state == 2:
                 # New 获取物品动画
                 if self.player.gainItemAnimating:
                     self.player.noticeGain(1000, self.player.new_item.num)
+
+            if self.game_state == 2:
+                #New 物品获取动画
+                if self.player.gainItemAnimating:
+                    self.player.noticeGain(1000, self.player.new_item.num)
+                    
+
                 if self.player.backpack.opened:
                     self.player.openBackpack()
                 # New
@@ -159,10 +176,13 @@ class ForestGarden:
 
                 self.player.inventory.display()
                 if need_moveWithMouse:
-                    self.player.backpack.moveWithMouse(self.player.backpack.item_chose, self.mouse_pos[0],
-                                                       self.mouse_pos[1])
+                    self.player.backpack.moveWithMouse(self.player.backpack.item_chose, self.mouse_pos[0],self.mouse_pos[1])
                 # New
                 self.player.goldShow()
+
+
+
+
 
         pygame.display.flip()
 
@@ -216,6 +236,7 @@ class ForestGarden:
                     start_space = self.player.backpack.checkMouseChose(self.mouse_pos)
                     if start_space != None:
                         self.player.backpack.item_chose = start_space.item
+
                     else:
                         self.player.backpack.item_chose = None
 
@@ -249,6 +270,28 @@ class ForestGarden:
                 mouse_pos = pygame.mouse.get_pos()
                 if self.main_menu.play_button.available:
                     self.main_menu.play_button.check_button(self, mouse_pos)
+                # 鼠标判定
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
+                    if self.main_menu.play_button.available:
+                        self.main_menu.play_button.check_button(self, mouse_pos)
+                    if event.button == 1:  # 鼠标左键点击
+                        # 获取鼠标点击位置
+                        mouse_x, mouse_y = pygame.mouse.get_pos()
+                        mouse_pos = pygame.math.Vector2(mouse_x, mouse_y) + self.all_sprites.offset
+                        print(f'鼠标当前位置{mouse_x},{mouse_y}')
+                        # 进行碰撞检测，判断鼠标是否与某个Plant实例相交
+                        clicked_sprites = [sprite for sprite in self.plant_group if
+                                           sprite.rect.collidepoint(mouse_pos)]
+                        print('已进行碰撞检测')
+                        print(f'{clicked_sprites}')
+                        print(f'{self.plant_group}')
+                        # if clicked_sprites.life>800:
+                        # 调用处理鼠标点击的方法
+                        self.handle_mouse_click_happy(mouse_pos)
+                        # else:
+                        #     self.handle_mouse_click_loveu(mouse_pos)
+
 
             # 键盘按键判定
             elif event.type == pygame.KEYDOWN:
@@ -281,28 +324,25 @@ class ForestGarden:
                 # New 交互按键判定
                 elif event.key == pygame.K_SPACE:
                     movement = []
+                    self.player.gainItem(Item("Hoe"))
                     self.player.interaction()
 
                 # 按下P键生成新的'fruittree'实例
                 elif event.key == pygame.K_p:
-
-                    mouse_x, mouse_y = pygame.mouse.get_pos()
-                    new_plant = Plant('fruittree', [self.plant_group, self.all_sprites, self.collision_sprites],
-                                      pygame.math.Vector2(mouse_x, mouse_y) + self.all_sprites.offset)
-                    plant_group.add(new_plant)
-                    new_emotes = Emotes(groups=[emotes_group, self.all_sprites], pos=new_plant.rect.topleft)
-                    emotes_group.add(new_emotes)
-                    print('1')
+                    self.plant_tree('fruittree')
 
                 # 按下O键生成新的'greentree'实例
                 elif event.key == pygame.K_o:
-                    mouse_x, mouse_y = pygame.mouse.get_pos()
-                    new_plant = Plant('greentree', [self.plant_group, self.all_sprites, self.collision_sprites], pygame.math.Vector2(mouse_x, mouse_y) + self.all_sprites.offset)
-                    plant_group.add(new_plant)
-                    print('2')
+                    self.plant_tree('fruittree')
+                    print('222')
                 #New 增加雨天天气开关
                 elif event.key == pygame.K_r:
+
                     self.if_rain = not self.if_rain
+
+                    # self.if_rain ^= True
+                    self.plant_rain()
+
 
 
             elif event.type == pygame.KEYUP:
@@ -316,24 +356,79 @@ class ForestGarden:
                     movement.remove(1)
                 # 在鼠标左键点击处生成新的'fruittree'实例
 
+    def handle_mouse_click_happy(self, mouse_pos):
+        # 获取相交的Plant实例
+        clicked_sprites = [sprite for sprite in self.plant_group if sprite.rect.collidepoint(mouse_pos)]
+
+        if clicked_sprites:
+            clicked_sprite = clicked_sprites[0]  # 获取第一个相交的Plant实例
+            print('已经有clicked_sprites')
+            # 检查是否已经存在Emotes实例，如果存在，则重新设置属性，否则创建新的Emotes实例
+            # if clicked_sprite.emotes is not None:
+            #     for emote in clicked_sprite.emotes:
+            #         clicked_sprite.emotes.emote.haverun_num = 0  # 重新设置表情动画的属性
+            # else:
+                # 创建Emotes实例
+            if clicked_sprite.life>800:
+                new_emotes = Emotes(mouse_pos,'happy', [self.emotes_group, self.all_sprites])
+            else:
+                new_emotes = Emotes(mouse_pos, 'loveu', [self.emotes_group, self.all_sprites])
+                # 将Emotes实例添加到emotes_group中
+            print('已经创建新emotes实例')
+            self.emotes_group.add(new_emotes)
+                # 将Emotes实例赋值给clicked_sprite.emotes
+            clicked_sprite.emotes.append(new_emotes)
+    def handle_mouse_click_loveu(self, mouse_pos):
+        # 获取相交的Plant实例
+        clicked_sprites = [sprite for sprite in self.plant_group if sprite.rect.collidepoint(mouse_pos)]
+
+        if clicked_sprites:
+            clicked_sprite = clicked_sprites[0]  # 获取第一个相交的Plant实例
+            print('已经有clicked_sprites')
+            # 检查是否已经存在Emotes实例，如果存在，则重新设置属性，否则创建新的Emotes实例
+            # if clicked_sprite.emotes is not None:
+            #     for emote in clicked_sprite.emotes:
+            #         clicked_sprite.emotes.emote.haverun_num = 0  # 重新设置表情动画的属性
+            # else:
+                # 创建Emotes实例
+            new_emotes = Emotes(mouse_pos,'loveu', [self.emotes_group, self.all_sprites])
+                # 将Emotes实例添加到emotes_group中
+            print('已经创建新emotes实例')
+            self.emotes_group.add(new_emotes)
+                # 将Emotes实例赋值给clicked_sprite.emotes
+            clicked_sprite.emotes.append(new_emotes)
     def run_Plants(self,current_season, all_sprites):
-        for plant in plant_group:
-            plant.update(current_season)
-            if plant.life > 800:#高血量（表情）
-                print('PANDUANLIFE')
-                # 在植物位置生成情感动画
-                for new_emotes in emotes_group:
-                    new_emotes.update()
-                # emotes_group.draw(new_emotes)
+        for plant in self.plant_group:
+            plant.plant_update(current_season)
+            # for new_emotes in self.emotes_group:
+
+            plant.emotes_update()
+            # if plant.life > 100:#高血量（表情）
+            #     print('血量大于800')
+            #     # 在植物位置生成情感动画
             plant.death()
+    def plant_tree(self,plant_type):#生成树
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        new_plant = Plant(f'{plant_type}', [self.plant_group, self.all_sprites, self.collision_sprites],
+                          pygame.math.Vector2(mouse_x, mouse_y) + self.all_sprites.offset)
+        self.plant_group.add(new_plant)
+        # new_emotes = Emotes(groups=[emotes_group, self.all_sprites], pos=new_plant.rect.topright)
+        # emotes_group.add(new_emotes)
+        # new_plant.emotes = new_emotes
+        print('已生成植物')
+        print(f'植物rect:{new_plant.rect}')
 
 
 
-
-
-
-
-
+    def plant_rain(self):
+        starttime = 0
+        now_time = pygame.time.get_ticks()
+        delay = 5000
+        if now_time-starttime>=delay:
+            print('rain2')
+            self.if_rain ^= True
+            print('rain')
+            starttime=pygame.time.get_ticks()
 def season(runtimes):
     # 规定每个季节的持续时间为10秒
     per_season = 2

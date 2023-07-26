@@ -6,7 +6,6 @@ from settings import *
 from camera.cameraGroup import *
 from character.Item import *
 
-
 class MainCharacter(pygame.sprite.Sprite):
     width = 31
     height = 36
@@ -34,13 +33,16 @@ class MainCharacter(pygame.sprite.Sprite):
     equiped_item = None
     new_item = None
 
+
     gold = 100
 
     def __init__(self, map_width, map_height, screen, pos, group, collision_group, soil_layer, tree_sprite, trader):
 
+
         super().__init__(group)
         self.collision_group = collision_group
         self.tree_group = tree_sprite
+        # self.plant_group =plant_sprite#修改7.24
         self.map_grid = soil_layer
         self.trader = trader
 
@@ -187,6 +189,20 @@ class MainCharacter(pygame.sprite.Sprite):
         else:
             print("NO Space left")
 
+    def noticeGain(self, duration = 1000, num = 1):
+        self.gainItemAnimating = True
+
+        current_time = pygame.time.get_ticks()
+        font = pygame.font.Font(size=48)
+        number = font.render(str('x' + str(num)), True, (0, 0, 0))
+
+        self.screen.blit(self.new_item.icon_backpack, ((SCREEN_WIDTH-self.width)/2 - 50, (SCREEN_HEIGHT-self.height)/2 - 100))
+        self.screen.blit(number, ((SCREEN_WIDTH-self.width)/2+30, (SCREEN_HEIGHT-self.height)/2 - 50))
+
+        if (current_time - self.notice_start_time) >= duration:
+            self.gainItemAnimating = False
+
+
     def equipItem(self, equip_num):
         if equip_num in range(5):
             self.inventory.moveChose(equip_num)
@@ -196,6 +212,7 @@ class MainCharacter(pygame.sprite.Sprite):
             else:
                 self.equiped_num = -1
                 self.equiped_item = None
+
 
     def noticeGain(self, duration=1000, num=1):
         self.gainItemAnimating = True
@@ -239,12 +256,14 @@ class MainCharacter(pygame.sprite.Sprite):
             self.item_animating = False
             self.ani_frame = 0
 
+
     def goldShow(self):
         background = pygame.transform.scale(pygame.image.load('sources/UI/UIPack/PNG/yellow_button13.png'), (200, 60))
         font = pygame.font.Font(size=48)
         text = font.render(str(self.gold), True, (0, 0, 0))
         self.screen.blit(background, (1370, 30))
         self.screen.blit(text, (1450, 42))
+
 
     # 前置加载
     def loadAnimation(self):
@@ -366,6 +385,7 @@ class Backpack:
             desti_space.pushItem(item1)
             temp_space.item = None
             temp_space.occupied = False
+
         elif item1.item_name == item2.item_name and desti_space != item1.space:
             item2.num += item1.num
             item1.space.item = None
@@ -403,7 +423,8 @@ class BackSpace:
         item.presentInBackPack(self)
         self.occupied = True
 
-    def addItem(self, num=1):
+
+    def addItem(self, num = 1):
         self.item.num += num
 
     def display(self):
@@ -414,7 +435,6 @@ class BackSpace:
             self.backpack.player.screen.blit(self.normal_img, (self.posx, self.posy))
         if self.item != None:
             self.item.display(0)
-
     def display_by_position(self, posx, posy):
         pre_posx = self.posx
         pre_posy = self.posy
@@ -488,6 +508,7 @@ class HandSpace(BackSpace):
             self.backpack.player.screen.blit(self.normal_img, (self.posx, self.posy))
         if self.item != None:
             self.item.display(1)
+
 
 
 #Shop

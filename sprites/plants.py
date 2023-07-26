@@ -2,7 +2,12 @@ import os
 import pygame
 import sys
 import re
+
 from settings import PLANT_ATTRIBUTE, LAYERS
+
+from settings import PLANT_ATTRIBUTE,LAYERS
+from sprites.particle import Particle
+
 from sprites.generic import Generic
 
 # def import_folder(folder_path):
@@ -43,7 +48,7 @@ class Plant(pygame.sprite.Sprite):
 
         # sprite setup
         self.image = self.frames[self.stage]
-        self.y_offset = -16 if plant_type == 'corn' else -8
+        self.y_offset = -16 #if plant_type == 'corn' else -8
         self.rect = self.image.get_rect(midbottom=pos + pygame.math.Vector2(0, self.y_offset))
         self.z = LAYERS['fruit']
 
@@ -52,7 +57,24 @@ class Plant(pygame.sprite.Sprite):
         self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.8, -self.rect.height * 0.8)
         self.hitbox.bottom = self.rect.bottom
 
+
     def update_plant(self, current_season):
+
+        #表情：
+        self.emotes = []
+        self.last_emotes_time = 0  # 记录上一次执行emotes_update()的时间
+        self.emotes_delay = 600  # 设置延迟时间（毫秒）
+        self.video_frame = 0
+        # self.last_time = 0
+        # self.delay = 150
+        # self.frame_num = 0
+        # self.haverun_num = 0
+
+        self.stump_origin_image = pygame.image.load(f'sources/Plants/stump/1.png')
+        self.stump_image = pygame.transform.scale(self.stump_origin_image, (120, 240))
+
+    def plant_update(self,current_season):
+
         # 更新植物的生长状态和图像
         self.growth += self.grow_speed
         if self.growth < 1:
@@ -95,55 +117,68 @@ class Plant(pygame.sprite.Sprite):
         self.life -= 1
         if self.life <= 0:
             print(f"位置在{self.pos}的植物死了。")
-            self.kill()  # 删除该植物实体
-# class emotes(Plant):
-#     def __init__(self,z,plant,duration=200):
-#         super().__init__(z,plant.rect.topright)
-#         self.start_time = pygame.time.get_ticks()
-#         self.duration = duration
-#         self.emotion_frames = import_folder(f'sources\Plants/emotes')  # Replace 'emotion' with the folder name for emotion animations
-#         self.emotion_frame_index = 0
-#         self.emotion_frame_delay = 100  # Adjust this value to control the speed of emotion animation
-#         self.emotion_last_update = pygame.time.get_ticks()
-#         self.emotion_image_size = (64, 64)  # Replace with the desired size for the emotion animation images
-#         self.image = self.emotion_frames[self.emotion_frame_index]
-#     def update(self):
-#         current_time = pygame.time.get_ticks()
-#         # if Plant.__init__().life:
-#         #     self.kill()
-#
-#         if current_time - self.emotion_last_update >= self.emotion_frame_delay:
-#             self.emotion_frame_index = (self.emotion_frame_index + 1) % len(self.emotion_frames)
-#             self.image = pygame.transform.scale(self.emotion_frames[self.emotion_frame_index], self.emotion_image_size)
-#             self.emotion_last_update = pygame.time.get_ticks()
-#             print('emo')
+            if self.emotes is not None:
+                for emote in self.emotes:
+                    emote.kill()
+            self.image = self.stump_image
+            # 删除该植物实体
+            # for emote in self.emotes:
+    def damage(self):
+        if self.life>0:
+            self.life -= 500
+            Particle(
+                pos=self.rect.topleft,
+                surf=self.image,
+                groups=self.all_sprites,  # self.groups()[1]是all_sprites组
+                z=LAYERS['fruit']
+            )
+            if self.health <= 0:
+                self.image = self.stump_image
+                self.rect = self.image.get_rect(midbottom=self.rect.midbottom)
+                self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.9, -self.rect.height * 0.6)
+
+
+    def add_emotes(self, pos, groups):
+        # 将Emotes实例添加到self.emotes列表中
+        emotes_instance = Emotes(pos, groups)
+        self.emotes.append(emotes_instance)
+
+    def emotes_update(self, frame_num=4):
+        frame_num = frame_num
+
+        # 遍历self.emotes列表中的每个Emotes实例
+        for emotes_instance in self.emotes:
+            if emotes_instance.haverun_num <= frame_num:
+                current_time = pygame.time.get_ticks()
+                if current_time - emotes_instance.last_time > emotes_instance.emotion_frame_delay:
+                    emotes_instance.emotion_frame_index = (emotes_instance.emotion_frame_index + 1) % len(emotes_instance.emotion_frames)
+                    emotes_instance.image = pygame.transform.scale(emotes_instance.emotion_frames[emotes_instance.emotion_frame_index],emotes_instance.emotion_image_size)
+                    print('图片已经切换')
+                    emotes_instance.last_time = pygame.time.get_ticks()
+                    emotes_instance.haverun_num += 1
+            else:
+                # 表情动画播放完成后，删除表情实例
+                emotes_instance.kill()
+
 class Emotes(pygame.sprite.Sprite):
-    def __init__(self,pos,duration=200, groups=None):
+    def __init__(self,pos,emo_type,groups):
         super().__init__(groups)  # Call the constructor of the Plant class with 'emotes' as the plant_type
         self.start_time = pygame.time.get_ticks()
-        self.duration = duration
-        self.emotion_frames = import_folder(f'sources/Plants/emotes')
+        self.emotion_frames = import_folder(f'sources/Plants/emotion/{emo_type}')
         self.emotion_frame_index = 0
         self.emotion_frame_delay = 100
-        self.emotion_last_update = 0
+        self.last_time = 0
+        self.haverun_num = 0
         self.emotion_image_size = (64, 64)
         self.pos = pos
         self.z = LAYERS['rain drops']
         self.y_offset = -16
         self.image = self.emotion_frames[self.emotion_frame_index]  # 修改部分：在这里设置self.image
-        self.rect = self.image.get_rect(midbottom=pos + pygame.math.Vector2(0, self.y_offset) )
+        self.rect = self.image.get_rect(midbottom=pos)
 
-    def update(self):
-        current_time = pygame.time.get_ticks()
-        # if current_time - self.start_time >= self.duration
-        # :
-        #     self.kill()
 
-        if current_time - self.emotion_last_update >= self.emotion_frame_delay:
-            self.emotion_frame_index = (self.emotion_frame_index + 1) % len(self.emotion_frames)
-            self.image = pygame.transform.scale(self.emotion_frames[self.emotion_frame_index], self.emotion_image_size)
-            self.rect = self.image.get_rect(midbottom=self.pos + pygame.math.Vector2(0, self.y_offset))
-            self.emotion_last_update = current_time
-            print('runle')
+
+
+
 
 

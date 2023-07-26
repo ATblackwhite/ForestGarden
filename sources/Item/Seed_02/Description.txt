@@ -1,2 +1,6 @@
+<<<<<<< Updated upstream
 Seed for corn?
+=======
+Seed for corn?
+>>>>>>> Stashed changes
 Maybe

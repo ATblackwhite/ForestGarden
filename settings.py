@@ -18,8 +18,13 @@ LAYERS = {
     'rain drops': 10
     }
 PLANT_ATTRIBUTE = {
-    'fruittree': (0.02, 1000, 20),  # (grow_speed, life, stages)
-    'greentree': (0.02, 1000, 20),   # (grow_speed, life, stages)
+    'fruittree': (0.02, 1000, 20),  # (grow_speed, life, stages)#fruittree
+    'greentree': (0.02, 1000, 20),   # (grow_speed, life, stages)#greentree
+    'corn':(0.02,200,20), #corn
+    'blueberry':(0.02,200,20), #blueberry
+    'tomato':(0.02,200,20)#tomato
+
+
 }
 # 设置瓦片大小
 TILE_SIZE = 64
