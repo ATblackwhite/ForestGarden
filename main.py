@@ -405,13 +405,17 @@ class ForestGarden:
             clicked_sprite.emotes.append(new_emotes)
     def run_Plants(self,current_season, all_sprites):
         for plant in self.plant_group:
-            plant.plant_update(current_season)
+            plant.plant_update(current_season, self.all_sprites)
             # for new_emotes in self.emotes_group:
 
             plant.emotes_update()
             # if plant.life > 100:#高血量（表情）
             #     print('血量大于800')
             #     # 在植物位置生成情感动画
+            plant.emotes_update()
+            plant.bling_update()
+            if plant.tree == 0:
+                plant.plant_havest_update(current_season)
             plant.death()
     def plant_tree(self,plant_type):#生成树
         mouse_x, mouse_y = pygame.mouse.get_pos()

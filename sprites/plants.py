@@ -71,6 +71,12 @@ class Plant(pygame.sprite.Sprite):
         self.last_stage = 0
         self.stagevideo = []
 
+        #好感度
+        self.love_player = 0
+
+        #是否为树
+        self.tree =1
+
     def plant_update(self,current_season,bling_groups):
         # 更新植物的生长状态和图像
         self.growth += self.grow_speed
@@ -185,14 +191,61 @@ class Crop(Plant):
         self.havestseason = PLANT_ATTRIBUTE.get(plant_type)[3]
         # 新增属性 self.harvestable，默认初始值为0
         self.harvestable = 0
-        self.fruit = self.growth*self.grow_speed*(self.life/1000)*(1/30)+0.0001#每秒0.06，166s成熟
-    def plant_update(self, current_season, bling_groups):
-        # 调用父类的 plant_update 方法来更新植物生长状态和图像
-        super().plant_update(current_season, bling_groups)
+        self.fruit = self.growth*self.grow_speed*(self.life/1000)*(1/30)+0.0001+1#每秒0.06，166s成熟
+        self.image = pygame.transform.scale(self.frames[self.stage],(100,167))
+        self.tree = 0
 
+
+    def plant_update(self,current_season,bling_groups):
+        # 更新植物的生长状态和图像
+        self.growth += self.grow_speed
+        if self.growth < 1:
+            self.stage = 0
+            print('stage0')
+            print(current_season)
+        elif self.growth < 2:
+            self.stage = 1
+            print('s1')
+            print(current_season)
+        elif self.growth < 3:
+            self.stage = 2
+            print('s2')
+            print(current_season)
+        elif self.growth < 4:
+            self.stage = 3
+            print('s3')
+            print(current_season)
+        elif self.growth>=4:
+            if current_season == 1:
+                self.stage = 5#有花无果
+                print('s4')
+            elif current_season == 2:
+                self.stage = 5
+                print('s5')
+            elif current_season == 3 and self.harvestable==1 and self.fruit>=1:
+                self.stage = 5
+                print('s6')
+            elif current_season == 3 and self.harvestable!=1 or self.fruit<1:
+                self.stage = 5
+                print('s6')
+            elif current_season == 4:
+                self.stage = 4#无果无花
+                print('s7')
+        if self.last_stage < self.stage:
+            bling = Bling(self.rect.midbottom+pygame.Vector2(50,200),bling_groups,'green')
+            self.stagevideo.append(bling)
+            self.last_stage = self.stage
+
+           #植物本身图片
+        self.image = self.frames[int(self.stage)]
+        # 更新hitbox位置
+        self.hitbox.midbottom = self.pos + pygame.math.Vector2(0, self.y_offset)
+    def plant_havest_update(self, current_season):
         # 新增代码：根据生长状态和季节来判断是否可以收获
         if self.stage == 5  and current_season == 3 and self.growth>100:
             self.harvestable = 1
+            bling = Bling(self.rect.midbottom + pygame.Vector2(50, 200), self.bling_groups, 'red')
+            self.stagevideo.append(bling)
         else:
             self.harvestable = 0
     def havest_ornot(self):
@@ -200,13 +253,14 @@ class Crop(Plant):
 def update_harvestable(crop):
     harvestable, plant_type = crop.havest()
     if harvestable == 1:
+        print('收获成功，给玩家背包增加一个什么东西')
         bling = Bling(crop.rect.midbottom+pygame.Vector2(50,200),crop.bling_groups,'yellow')
         crop.stagevideo.append(bling)
         crop.fruit = 0
-        return plant_type
+        crop.harvestable = 0
         #设置水果度为0
     elif harvestable == 0:
-        return None
+        print('现在还不能收获')
 
 class Emotes(pygame.sprite.Sprite):
     def __init__(self,pos,emo_type,groups):
