@@ -39,11 +39,11 @@ class Plant(pygame.sprite.Sprite):
 
         # plant growing
         self.stage = 0
-        self.grow_speed, self.life, self.stages = PLANT_ATTRIBUTE.get(plant_type)
+        self.grow_speed, self.life, self.stages = PLANT_ATTRIBUTE.get(plant_type)[:3]
         self.growth = float(0)
 
         # sprite setup
-        self.image = self.frames[self.stage]
+        self.image = pygame.transform.scale(self.frames[self.stage],(192,320))
         self.y_offset = -16 #if plant_type == 'corn' else -8
         self.rect = self.image.get_rect(midbottom=pos + pygame.math.Vector2(0, self.y_offset))
         self.z = LAYERS['fruit']
@@ -63,10 +63,15 @@ class Plant(pygame.sprite.Sprite):
         # self.frame_num = 0
         # self.haverun_num = 0
 
+        #树桩
         self.stump_origin_image = pygame.image.load(f'sources/Plants/stump/1.png')
         self.stump_image = pygame.transform.scale(self.stump_origin_image, (120, 240))
 
-    def plant_update(self,current_season):
+        #生长动画
+        self.last_stage = 0
+        self.stagevideo = []
+
+    def plant_update(self,current_season,bling_groups):
         # 更新植物的生长状态和图像
         self.growth += self.grow_speed
         if self.growth < 1:
@@ -98,7 +103,13 @@ class Plant(pygame.sprite.Sprite):
             elif current_season == 4:
                 self.stage = 7
                 print('s7')
+        if self.last_stage < self.stage:
 
+            bling = Bling(self.rect.midbottom+pygame.Vector2(50,200),bling_groups,'green')
+            self.stagevideo.append(bling)
+            self.last_stage = self.stage
+
+           #植物本身图片
         self.image = self.frames[int(self.stage)]
         # 更新hitbox位置
         self.hitbox.midbottom = self.pos + pygame.math.Vector2(0, self.y_offset)
@@ -151,6 +162,51 @@ class Plant(pygame.sprite.Sprite):
             else:
                 # 表情动画播放完成后，删除表情实例
                 emotes_instance.kill()
+    def bling_update(self):
+        # 遍历self.emotes列表中的每个Emotes实例
+        for bling_instance in self.stagevideo:
+            if bling_instance.frames_num_now <= bling_instance.frames_num:
+                current_time = pygame.time.get_ticks()
+                if current_time -bling_instance.last_time > bling_instance.frame_delay:
+                    bling_instance.frame_index = (bling_instance.frame_index + 1) % len(bling_instance.bling_frames)
+                    bling_instance.image = pygame.transform.scale(bling_instance.bling_frames[bling_instance.frame_index],bling_instance.image_size)
+                    print('图片已经切换')
+                    bling_instance.last_time = pygame.time.get_ticks()
+                    bling_instance.frames_num_now += 1
+            else:
+                # 表情动画播放完成后，删除表情实例
+                bling_instance.kill()
+
+
+class Crop(Plant):
+    def __init__(self, plant_type, groups, pos):
+        # 调用父类的构造函数来初始化基本属性
+        super().__init__(plant_type, groups, pos)
+        self.havestseason = PLANT_ATTRIBUTE.get(plant_type)[3]
+        # 新增属性 self.harvestable，默认初始值为0
+        self.harvestable = 0
+        self.fruit = self.growth*self.grow_speed*(self.life/1000)*(1/30)+0.0001#每秒0.06，166s成熟
+    def plant_update(self, current_season, bling_groups):
+        # 调用父类的 plant_update 方法来更新植物生长状态和图像
+        super().plant_update(current_season, bling_groups)
+
+        # 新增代码：根据生长状态和季节来判断是否可以收获
+        if self.stage == 5  and current_season == 3 and self.growth>100:
+            self.harvestable = 1
+        else:
+            self.harvestable = 0
+    def havest_ornot(self):
+        return (self.harvestable,self.plant_type)
+def update_harvestable(crop):
+    harvestable, plant_type = crop.havest()
+    if harvestable == 1:
+        print('收获成功，给玩家背包增加一个什么东西')
+        bling = Bling(crop.rect.midbottom+pygame.Vector2(50,200),crop.bling_groups,'yellow')
+        crop.stagevideo.append(bling)
+        crop.fruit = 0
+        #设置水果度为0
+    elif harvestable == 0:
+        print('现在还不能收获')
 
 class Emotes(pygame.sprite.Sprite):
     def __init__(self,pos,emo_type,groups):
@@ -161,12 +217,27 @@ class Emotes(pygame.sprite.Sprite):
         self.emotion_frame_delay = 100
         self.last_time = 0
         self.haverun_num = 0
-        self.emotion_image_size = (64, 64)
+        self.emotion_image_size = (120, 120)
         self.pos = pos
         self.z = LAYERS['rain drops']
         self.y_offset = -16
         self.image = self.emotion_frames[self.emotion_frame_index]  # 修改部分：在这里设置self.image
         self.rect = self.image.get_rect(midbottom=pos)
+
+class Bling(pygame.sprite.Sprite):
+    def __init__(self, pos, groups,color):
+        super().__init__(groups)
+        self.bling_folder = f'sources/plants/bling/{color}'  # 设置 bling 文件夹路径
+        self.bling_frames = import_folder(self.bling_folder)
+        self.frames_num = 6
+        self.frame_index = 0
+        self.frame_delay = 100
+        self.last_time = 0
+        self.frames_num_now = 0
+        self.image_size = (120, 120)
+        self.image = self.bling_frames[self.frame_index]
+        self.rect = self.image.get_rect(midbottom=pos)
+        self.z = LAYERS['fruit']
 
 
 

@@ -1,7 +1,7 @@
 import pygame
 from settings import *
 from pytmx.util_pygame import load_pygame
-from sprites.plants import Plant
+from sprites.plants import Plant, Crop, update_harvestable
 
 class SoilLayer:
     def __init__(self, all_sprites, plant_group, collision_sprites):
@@ -65,7 +65,7 @@ class SoilLayer:
                 surf=pygame.image.load(r"asset\objects\outdoor_64_227.png").convert_alpha(),
                 groups=[self.all_sprites, self.soil_sprites]
             ))
-        print('plough')
+        # print('plough')
 
 
     def water(self, target_point):
@@ -80,7 +80,7 @@ class SoilLayer:
                 surf=pygame.image.load(r"asset\objects\outdoor_64_682.png").convert_alpha(),
                 groups=[self.all_sprites, self.water_sprites]
             ))
-        print('water')
+        # print('water')
 
     def water_all(self):
         for row_index, row in enumerate(self.grid):
@@ -93,10 +93,11 @@ class SoilLayer:
                         groups=[self.all_sprites, self.water_sprites]
                     ))
 
-    def plant(self, target_point, plant_type):
+    def plant_tree(self, target_point, plant_type):
         x = int(target_point.x // TILE_SIZE)
         y = int(target_point.y // TILE_SIZE)
         cell = self.grid[y][x]
+        # 土壤被开垦且没有种植
         if 'X' in cell and 'P' not in cell:
             # 创建plant
             self.grid[y][x].append('P')
@@ -104,6 +105,34 @@ class SoilLayer:
             self.grid[y][x].append(new_plant)
             return True
         return False
+
+    def plant_crop(self, target_point, plant_type):
+        x = int(target_point.x // TILE_SIZE)
+        y = int(target_point.y // TILE_SIZE)
+        cell = self.grid[y][x]
+        # 土壤被开垦且没有种植
+        if 'X' in cell and 'P' not in cell:
+            # 创建crop
+            self.grid[y][x].append('P')
+            new_plant = Crop(f'{plant_type}', [self.plant_group, self.all_sprites, self.collision_sprites], (x * TILE_SIZE + 30, y * TILE_SIZE + 75))
+            self.grid[y][x].append(new_plant)
+            return True
+        return False
+
+    def harvest(self, target_point):
+        x = int(target_point.x // TILE_SIZE)
+        y = int(target_point.y // TILE_SIZE)
+        cell = self.grid[y][x]
+        if 'P' in cell:
+            for item in self.grid[y][x]:
+                # 确认这个网格上种植了Crop
+                if isinstance(Crop):
+                    crop = item
+                    return update_harvestable(crop)
+        # 返回None说明这个格子上并没有种植作物
+        return None
+
+
 
 
 
