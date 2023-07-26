@@ -147,17 +147,21 @@ class ForestGarden:
             if len(movement) != 0:
                 self.player.move_by_dire(movement[len(movement) - 1])
             # 最高层UI绘制
-            if self.game_state == 2:
+                        if self.game_state == 2:
                 # New 获取物品动画
                 if self.player.gainItemAnimating:
                     self.player.noticeGain(1000, self.player.new_item.num)
                 if self.player.backpack.opened:
                     self.player.openBackpack()
+                # New
+                if self.player.shop.opened:
+                    self.player.openShop()
+
                 self.player.inventory.display()
                 if need_moveWithMouse:
                     self.player.backpack.moveWithMouse(self.player.backpack.item_chose, self.mouse_pos[0],
                                                        self.mouse_pos[1])
-                # New金币显示
+                # New
                 self.player.goldShow()
 
         pygame.display.flip()
