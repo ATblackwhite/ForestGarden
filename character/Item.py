@@ -17,33 +17,15 @@ class Item:
         self.icon_backpack = pygame.transform.scale(self.icon, (80, 80))
         self.icon_inventory = pygame.transform.scale(self.icon, (50, 50))
         self.description_line = open(self.description_location, "r")
-        self.description = self.description_line.read()
+        self.description_whole = self.description_line.read()
+        self.description = self.description_whole.split('_')[0]
         self.handled = False
         self.chosen = False
         self.num = 1
 
-        match self.item_name:
-            case "Axe":
-                self.cost = 20
-                self.worth = 10
-            case "Hoe":
-                self.cost = 20
-                self.worth = 10
-            case "Pot":
-                self.cost = 20
-                self.worth = 10
-            case "Seed_01":
-                self.cost = 10
-                self.worth = 1
-            case "Seed_02":
-                self.cost = 15
-                self.worth = 1
-            case "Seed_03":
-                self.cost = 20
-                self.worth = 1
-            case "Wood":
-                self.cost = 50
-                self.worth = 40
+        self.cost = int(self.description_whole.split('_')[1])
+        self.worth = int(self.description_whole.split('_')[2])
+
 
     def presentInBackPack(self, space):
         self.space = space
@@ -54,21 +36,16 @@ class Item:
         self.screen = self.player.screen
 
     def display(self, isInventory):
-
         self.posx = self.space.posx + 6
         self.posy = self.space.posy
         if isInventory:
             self.screen.blit(self.icon_inventory, (self.posx, self.posy))
         else:
             self.screen.blit(self.icon_backpack, (self.posx, self.posy))
-
-        self.player.screen.blit(self.icon, (self.posx, self.posy))
-
         if self.num > 1:
             font = pygame.font.Font('sources/UI/UIPack/Font/kenvector_future.ttf', 24)
             number = font.render(str(self.num), True, (0, 0, 0))
             if isInventory:
-
                 self.screen.blit(number, (self.posx+50-20, self.posy+50-20))
             else:
                 self.screen.blit(number, (self.posx+80-15, self.posy+80-25))
@@ -95,10 +72,6 @@ class Item:
             self.space.item = None
             self.space.occupied = False
 
-        else:
-            self.player.screen.blit(number, (self.posx+80-15, self.posy+80-25))
-
-
     #New
     def item_use(self, interaction_point):
         match self.item_name:
@@ -121,10 +94,7 @@ class Item:
                     self.player.gainItem(Item("Wood"))
 
         if "Seed" in self.item_name:
-
             seed_type = self.item_name.split('_')[1]
             plant = self.player.map_grid.plant(interaction_point, seed_type)
             if plant:
                 self.decrease()
-
-            seed_ID = self.item_name.split('_')[0]
