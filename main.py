@@ -165,10 +165,10 @@ class ForestGarden:
                     
 
                 if self.player.backpack.opened:
-                    self.player.openBackpack()
+                    self.player.backpack.display()
                 # New
                 if self.player.shop.opened:
-                    self.player.openShop()
+                    self.player.shop.display()
 
                 self.player.inventory.display()
                 if need_moveWithMouse:
