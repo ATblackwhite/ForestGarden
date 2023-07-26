@@ -241,9 +241,11 @@ class MainCharacter(pygame.sprite.Sprite):
 
     def goldShow(self):
         background = pygame.transform.scale(pygame.image.load('sources/UI/UIPack/PNG/yellow_button13.png'), (200, 60))
+        gold_img = pygame.transform.scale(pygame.image.load('sources/Item/Gold/Icon32.png'), (45, 45))
         font = pygame.font.Font(size=48)
         text = font.render(str(self.gold), True, (0, 0, 0))
         self.screen.blit(background, (1370, 30))
+        self.screen.blit(gold_img, (1390, 35))
         self.screen.blit(text, (1450, 42))
 
     # 前置加载
