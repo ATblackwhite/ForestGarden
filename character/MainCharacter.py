@@ -524,7 +524,7 @@ class Shop(Backpack):
     posx = 50
 
     buy_list = []
-    item_for_sell = ["Axe", "Pot", "Hoe", "Seed_01", "Seed_02", "Seed_03", "Seed_fruittree", "Seed_01", "Seed_02"]
+    item_for_sell = ["Axe", "Pot", "Hoe", "Seed_tomato", "Seed_corn", "Seed_03", "Seed_fruittree", "Seed_tomato", "Seed_corn"]
     sell_list = []
 
     list_head = 0
