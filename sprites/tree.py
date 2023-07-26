@@ -36,3 +36,5 @@ class Tree(Generic):
                 self.image = self.stump_image
                 self.rect = self.image.get_rect(midbottom=self.rect.midbottom)
                 self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.9, -self.rect.height * 0.6)
+                return True
+            return False
