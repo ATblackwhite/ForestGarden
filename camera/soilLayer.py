@@ -126,7 +126,7 @@ class SoilLayer:
         if 'P' in cell:
             for item in self.grid[y][x]:
                 # 确认这个网格上种植了Crop
-                if isinstance(Crop):
+                if isinstance(item, Crop):
                     crop = item
                     return update_harvestable(crop)
         # 返回None说明这个格子上并没有种植作物
