@@ -70,6 +70,7 @@ class Item:
         self.num -= 1
         if self.num <= 0:
             self.space.item = None
+            self.space.backpack.player.equipped_item = None
             self.space.occupied = False
 
     #New
