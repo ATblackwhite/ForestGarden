@@ -98,7 +98,7 @@ class ForestGarden:
         self.player.gainItem(Item("Hoe"))
         self.player.gainItem(Item("Axe"))
         self.player.gainItem(Item("Pot"))
-        self.player.gainItem(Item("Seed_01"))
+        self.player.gainItem(Item("Seed_fruittree"))
 
 
     def run_game(self):
@@ -140,15 +140,11 @@ class ForestGarden:
         elif self.game_state == 2:
             # 渲染精灵组中所有的精灵
             self.all_sprites.custom_draw(self.player)
-            self.all_sprites.update()
+            # self.all_sprites.update()
+            # self.plant_group.draw(self.screen)
             global current_season
-
-            for plant in self.plant_group:
-                plant.update_plant(current_season)
-
             self.plant_group.update(current_season)
             # self.emotes_group.update()
-# >>>>>>> Stashed changes
             # 低层环境人物绘制
             global need_moveWithMouse
             global movement
