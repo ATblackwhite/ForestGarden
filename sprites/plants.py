@@ -27,6 +27,15 @@ def import_folder(folder_path):
         animation_images.append(scaled_image)
     return animation_images
 
+def crop_import_folder(folder_path):
+    animation_images = []
+    for filename in sorted(os.listdir(folder_path), key=lambda x: int(re.findall(r'\d+', x)[0])):
+        image_path = os.path.join(folder_path, filename)
+        image = pygame.image.load(image_path)
+        scaled_image = pygame.transform.scale(image, (100,167))
+        animation_images.append(scaled_image)
+    return animation_images
+
 # 定义Plant类继承自pygame.sprite.Sprite
 class Plant(pygame.sprite.Sprite):
     def __init__(self, plant_type, groups, pos):
@@ -44,8 +53,8 @@ class Plant(pygame.sprite.Sprite):
 
         # sprite setup
         self.image = pygame.transform.scale(self.frames[self.stage],(192,320))
-        self.y_offset = -16 + 75 # +75是因为需要修正显示位置，下面的30同理  #if plant_type == 'corn' else -8
-        self.rect = self.image.get_rect(midbottom=pos + pygame.math.Vector2(30, self.y_offset))
+        self.y_offset = -16 #if plant_type == 'corn' else -8
+        self.rect = self.image.get_rect(midbottom=pos + pygame.math.Vector2(0, self.y_offset))
         self.z = LAYERS['fruit']
 
 
@@ -128,10 +137,8 @@ class Plant(pygame.sprite.Sprite):
             self.kill()
             return True
         return False
-            
             # 删除该植物实体
             # for emote in self.emotes:
-
     def damage(self):
         if self.life>0:
             self.life -= 500
@@ -222,7 +229,6 @@ class Crop(Plant):
                 self.stage = 5
             elif current_season == 4:
                 self.stage = 3#无果无花
-
         if self.last_stage < self.stage:
             bling = Bling(self.rect.midbottom+pygame.Vector2(50,200),bling_group,'green')
             self.stagevideo.append(bling)
@@ -242,7 +248,6 @@ class Crop(Plant):
             self.harvestable = 0
     def havest_ornot(self):
         return (self.harvestable,self.plant_type)
-
 def update_harvestable(crop,bling_groups):
     harvestable, plant_type = crop.havest_ornot()
     if harvestable == 1:
