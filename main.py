@@ -414,6 +414,7 @@ class ForestGarden:
                 x = x // TILE_SIZE
                 y = y //  TILE_SIZE
                 self.soil_layer.grid[y][x].remove('P')
+                self.soil_layer.grid[y][x].remove(plant)
 
     def plant_tree(self,plant_type):#生成树
         mouse_x, mouse_y = pygame.mouse.get_pos()

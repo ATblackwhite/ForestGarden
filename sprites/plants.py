@@ -197,6 +197,8 @@ class Crop(Plant):
         self.fruit = self.growth * self.grow_speed * (self.life / 1000) * (1 / 30) + 0.0001 + 1  # 每秒0.06，166s成熟
         self.image = pygame.transform.scale(self.frames[self.stage], (100, 167))
         self.tree = 0
+        # 根据Crop位置进行微调
+        self.rect.center += pygame.math.Vector2(0, 50)
 
     def plant_update(self, current_season, bling_group):
         # 更新植物的生长状态和图像

@@ -101,7 +101,8 @@ class SoilLayer:
         if 'X' in cell and 'P' not in cell:
             # 创建plant
             self.grid[y][x].append('P')
-            Plant(f'{plant_type}', [self.plant_group, self.all_sprites, self.collision_sprites], (x * TILE_SIZE, y * TILE_SIZE))
+            tree = Plant(f'{plant_type}', [self.plant_group, self.all_sprites, self.collision_sprites], (x * TILE_SIZE, y * TILE_SIZE))
+            self.grid[y][x].append(tree)
             return True
         return False
 
@@ -113,7 +114,7 @@ class SoilLayer:
         if 'X' in cell and 'P' not in cell:
             # 创建crop
             self.grid[y][x].append('P')
-            new_plant = Crop(f'{plant_type}', [self.plant_group, self.all_sprites, self.collision_sprites], (x * TILE_SIZE + 30, y * TILE_SIZE + 75))
+            new_plant = Crop(f'{plant_type}', [self.plant_group, self.all_sprites, self.collision_sprites], (x * TILE_SIZE, y * TILE_SIZE))
             self.grid[y][x].append(new_plant)
             return True
         return False
