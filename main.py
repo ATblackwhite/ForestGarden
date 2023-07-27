@@ -331,10 +331,13 @@ class ForestGarden:
                     self.player.equipItem(3)
                 elif event.key == pygame.K_5:
                     self.player.equipItem(4)
-                # New 交互按键判定
+                # 交互按键判定
                 elif event.key == pygame.K_SPACE:
                     movement = []
                     self.player.interaction()
+                #New 交谈判定
+                elif event.key == pygame.K_t:
+                self.player.talkToPlants()
 
                 # # 按下P键生成新的'fruittree'实例
                 # elif event.key == pygame.K_p:
