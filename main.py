@@ -362,10 +362,6 @@ class ForestGarden:
 
                     self.if_rain = not self.if_rain
 
-                    # self.if_rain ^= True
-                    self.plant_rain()
-
-
 
             elif event.type == pygame.KEYUP:
                 if (event.key == pygame.K_LEFT or event.key == pygame.K_a) and 2 in movement:
@@ -451,13 +447,6 @@ class ForestGarden:
         print('已生成植物')
         print(f'作物rect:{new_crop.rect}')
 
-    def plant_rain(self):
-        starttime = 0
-        now_time = pygame.time.get_ticks()
-        delay = 5000
-        if now_time-starttime>=delay:
-            self.if_rain ^= True
-            starttime=pygame.time.get_ticks()
 
 def season(runtimes):
     # 规定每个季节的持续时间为10秒
