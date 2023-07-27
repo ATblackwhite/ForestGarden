@@ -1,16 +1,18 @@
 import pygame
 from settings import *
 from pytmx.util_pygame import load_pygame
-from sprites.plants import Plant, Crop, update_harvestable
+from sprites.plants import Plant, Crop, update_harvestable, Bling
 
 class SoilLayer:
-    def __init__(self, all_sprites, plant_group, collision_sprites):
+    def __init__(self, all_sprites, plant_group, collision_sprites, bling_groups):
         # sprite groups
         self.all_sprites = all_sprites
         # 植物的精灵组
         self.plant_group = plant_group
         # 碰撞的精灵组
         self.collision_sprites = collision_sprites
+        # bling的精灵组
+        self.bling_groups = bling_groups
 
 
         # 耕地的精灵组
@@ -59,6 +61,7 @@ class SoilLayer:
         self.plough_sound.play()
         cell = self.grid[y][x]
         if 'F' in cell and 'X' not in cell:
+
             self.grid[y][x].append('X')
             self.grid[y][x].append(SoilTile(
                 pos=(x * TILE_SIZE, y * TILE_SIZE),
@@ -71,15 +74,22 @@ class SoilLayer:
     def water(self, target_point):
         x = int(target_point.x // TILE_SIZE)
         y = int(target_point.y // TILE_SIZE)
-        cell = self.grid[y][x]
         self.water_sound.play()
-        if 'X' in cell and 'W' not in cell:
-            self.grid[y][x].append('W')
-            self.grid[y][x].append(WaterTile(
-                pos=(x * TILE_SIZE, y * TILE_SIZE),
-                surf=pygame.image.load(r"asset\objects\outdoor_64_682.png").convert_alpha(),
-                groups=[self.all_sprites, self.water_sprites]
-            ))
+        cell = self.grid[y][x]
+        if 'X' in cell:
+            for item in self.grid[y][x]:
+                if isinstance(item, Plant):
+                    bling = Bling(item.rect.midbottom + pygame.Vector2(50, 200), [self.bling_groups, self.all_sprites],
+                                  'blue')
+                    item.stagevideo.append(bling)
+                    item.relationship += 1
+            if 'W' not in cell:
+                self.grid[y][x].append('W')
+                self.grid[y][x].append(WaterTile(
+                    pos=(x * TILE_SIZE, y * TILE_SIZE),
+                    surf=pygame.image.load(r"asset\objects\outdoor_64_682.png").convert_alpha(),
+                    groups=[self.all_sprites, self.water_sprites]
+                ))
         # print('water')
 
     def water_all(self):
