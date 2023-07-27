@@ -337,7 +337,7 @@ class ForestGarden:
                     self.player.interaction()
                 #New 交谈判定
                 elif event.key == pygame.K_t:
-                self.player.talkToPlants()
+                    self.player.talkToPlants()
 
                 # # 按下P键生成新的'fruittree'实例
                 # elif event.key == pygame.K_p:
