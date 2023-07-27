@@ -36,7 +36,7 @@ class Plant(pygame.sprite.Sprite):
 
         # setup
         self.plant_type = plant_type
-        self.frames = import_folder(f'sources\Plants/{plant_type}')
+        self.frames = import_folder(f'sources\plants/{plant_type}')
         self.pos = pos
 
         # plant growing
@@ -45,16 +45,17 @@ class Plant(pygame.sprite.Sprite):
         self.growth = float(0)
 
         # sprite setup
-        self.image = pygame.transform.scale(self.frames[self.stage], (192, 320))
-        self.y_offset = -16 + 75  # +75是因为需要修正显示位置，下面的30同理  #if plant_type == 'corn' else -8
+        self.image = pygame.transform.scale(self.frames[self.stage],(192,320))
+        self.y_offset = -16 + 70  # +50是因为需要修正显示位置，下面的30同理  #if plant_type == 'corn' else -8
         self.rect = self.image.get_rect(midbottom=pos + pygame.math.Vector2(30, self.y_offset))
         self.z = LAYERS['fruit']
+
 
         # hitbox setup
         self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.8, -self.rect.height * 0.8)
         self.hitbox.bottom = self.rect.bottom
 
-        # 表情：
+        #表情：
         self.emotes = []
         self.last_emotes_time = 0  # 记录上一次执行emotes_update()的时间
         self.emotes_delay = 600  # 设置延迟时间（毫秒）
@@ -64,20 +65,31 @@ class Plant(pygame.sprite.Sprite):
         # self.frame_num = 0
         # self.haverun_num = 0
 
-        # 树桩
-        self.stump_origin_image = pygame.image.load(f'sources/Plants/stump/1.png')
+        #树桩
+        self.stump_origin_image = pygame.image.load(f'sources/plants/stump/1.png')
         self.stump_image = pygame.transform.scale(self.stump_origin_image, (120, 240))
 
-        # 生长动画
+        #生长动画
         self.last_stage = 0
         self.stagevideo = []
 
-        # 好感度
+        #好感度
         self.love_player = 0
 
-        # 是否为树
-        self.tree = 1
+        #是否为树
+        self.tree =1
+        self.harvestable = 0
 
+        #talk
+        self.talk = []
+        self.talk_num = 1
+
+        self.relationship = 1
+        self.relationword = None
+        self.stageword = None
+        self.seasonword = None
+        self.talkword = (f'{self.stageword}')
+        self.water = 1
     def plant_update(self, current_season, bling_groups):
         # 更新植物的生长状态和图像
         self.growth += self.grow_speed
@@ -130,7 +142,34 @@ class Plant(pygame.sprite.Sprite):
 
         # 删除该植物实体
         # for emote in self.emotes:
+    def relation(self,current_season):
+        if self.relationship<20:
+            self.relationword = 'normal'
+        elif self.relationship>=20:
+            self.relationword = 'good'
+        elif self.relationship>=80:
+            self.relationword = 'deep'##
 
+        if self.life>=18000:
+            self.stageword = 'baby'
+        elif 5000<self.life<18000:
+            if self.harvestable == 0:
+                self.stageword = 'young'
+            elif self.harvestable ==1:
+                self.stageword = 'harvest'
+            else:
+                self.stageword = 'young'
+        elif self.life<5000:
+            self.relationword = 'old'###
+
+        if current_season ==1:
+            self.seasonword = 'spring'
+        elif current_season ==2:
+            self.seasonword = 'summer'
+        elif current_season ==3:
+            self.seasonword = 'autumn'
+        elif current_season ==4:
+            self.seasonword = 'winter'
     def damage(self):
         if self.life > 0:
             self.life -= 500
@@ -185,7 +224,21 @@ class Plant(pygame.sprite.Sprite):
             else:
                 # 表情动画播放完成后，删除表情实例
                 bling_instance.kill()
-
+    def talk_update(self):
+        # 遍历self.talk列表中的每个Talk实例
+        for talk_instance in self.talk:
+            if talk_instance.frames_num_now <= talk_instance.frames_num:
+                current_time = pygame.time.get_ticks()
+                if current_time - talk_instance.last_time > talk_instance.frame_delay:
+                    talk_instance.frame_index = (talk_instance.frame_index + 1) % len(talk_instance.talk_frames)
+                    talk_instance.image = pygame.transform.scale(talk_instance.talk_frames[talk_instance.frame_index],
+                                                                 talk_instance.long_sentence_size)
+                    print('图片已经切换')
+                    talk_instance.last_time = pygame.time.get_ticks()
+                    talk_instance.frames_num_now += 1
+            else:
+                # 表情动画播放完成后，删除表情实例
+                talk_instance.kill()
 
 class Crop(Plant):
     def __init__(self, plant_type, groups, pos):
@@ -194,45 +247,54 @@ class Crop(Plant):
         self.havestseason = PLANT_ATTRIBUTE.get(plant_type)[3]
         # 新增属性 self.harvestable，默认初始值为0
         self.harvestable = 0
-        self.fruit = self.growth * self.grow_speed * (self.life / 1000) * (1 / 30) + 0.0001 + 1  # 每秒0.06，166s成熟
-        self.image = pygame.transform.scale(self.frames[self.stage], (100, 167))
+        self.fruit = self.growth*self.grow_speed*(self.life/1000)*(1/30)+0.0001+1#每秒0.06，166s成熟
+        self.image = pygame.transform.scale(self.frames[self.stage],(192,320))
         self.tree = 0
-        # 根据Crop位置进行微调
+        self.harvest_lasttime=0
         self.rect.center += pygame.math.Vector2(0, 50)
+        self.y_offset = -16 + 50
 
-    def plant_update(self, current_season, bling_group):
+    def plant_update(self,current_season,bling_group):
         # 更新植物的生长状态和图像
         self.growth += self.grow_speed
         if self.growth < 1:
             self.stage = 0
-
+            print('stage0')
+            print(current_season)
         elif self.growth < 2:
             self.stage = 1
-
+            print('s1')
+            print(current_season)
         elif self.growth < 3:
             self.stage = 2
-
+            print('s2')
+            print(current_season)
         elif self.growth < 4:
             self.stage = 3
-
-        elif self.growth >= 4:
+            print('s3')
+            print(current_season)
+        elif self.growth>=4:
             if current_season == 1:
-                self.stage = 5  # 有花无果
+                self.stage = 5#有花无果
+                print('s4')
             elif current_season == 2:
                 self.stage = 5
-            elif current_season == 3 and self.fruit >= 1:
+                print('s5')
+            elif current_season == 3 and self.fruit>=1:
                 self.stage = 4
-            elif current_season == 3 and (self.harvestable != 1 or self.fruit < 1):
+                print('成熟可收获')
+            elif current_season == 3 and( self.harvestable!=1 or self.fruit<1):
                 self.stage = 5
+                print('s6')
             elif current_season == 4:
-                self.stage = 3  # 无果无花
-
+                self.stage = 3#无果无花
+                print('s7')
         if self.last_stage < self.stage:
-            bling = Bling(self.rect.midbottom + pygame.Vector2(50, 200), bling_group, 'green')
+            bling = Bling(self.rect.midbottom+pygame.Vector2(50,200),bling_group,'green')
             self.stagevideo.append(bling)
             self.last_stage = self.stage
 
-        # 植物本身图片
+           #植物本身图片
         self.image = self.frames[int(self.stage)]
         # 更新hitbox位置
         self.hitbox.midbottom = self.pos + pygame.math.Vector2(0, self.y_offset)
@@ -267,7 +329,7 @@ class Emotes(pygame.sprite.Sprite):
     def __init__(self, pos, emo_type, groups):
         super().__init__(groups)  # Call the constructor of the Plant class with 'emotes' as the plant_type
         self.start_time = pygame.time.get_ticks()
-        self.emotion_frames = import_folder(f'sources/Plants/emotion/{emo_type}')
+        self.emotion_frames = import_folder(f'sources/plants/emotion/{emo_type}')
         self.emotion_frame_index = 0
         self.emotion_frame_delay = 100
         self.last_time = 0
@@ -293,9 +355,23 @@ class Bling(pygame.sprite.Sprite):
         self.image_size = (120, 120)
         self.image = self.bling_frames[self.frame_index]
         self.rect = self.image.get_rect(midbottom=pos)
-        self.z = LAYERS['fruit']
+        self.z = LAYERS['rain drops']
 
-
+class Talk(pygame.sprite.Sprite):
+    def __init__(self, pos, groups):
+        super().__init__(groups)
+        self.talk_folder = f'sources/plants/talk/old/good'  # 设置 bling 文件夹路径
+        self.talk_frames = import_folder(self.talk_folder)
+        self.frames_num = 1
+        self.frame_index = 0
+        self.frame_delay = 2000
+        self.last_time = 0
+        self.frames_num_now = 0
+        self.long_sentence_size = (150, 150)
+        self.short_sentence_size = (100, 100)
+        self.image = self.talk_frames[self.frame_index]
+        self.rect = self.image.get_rect(midbottom=pos)
+        self.z = LAYERS['rain drops']
 
 
 
