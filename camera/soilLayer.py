@@ -128,7 +128,7 @@ class SoilLayer:
                 # 确认这个网格上种植了Crop
                 if isinstance(item, Crop):
                     crop = item
-                    return update_harvestable(crop)
+                    return update_harvestable(crop, self.all_sprites)
         # 返回None说明这个格子上并没有种植作物
         return None
 
