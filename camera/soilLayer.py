@@ -4,7 +4,7 @@ from pytmx.util_pygame import load_pygame
 from sprites.plants import Plant, Crop, update_harvestable, Bling
 
 class SoilLayer:
-    def __init__(self, all_sprites, plant_group, collision_sprites, bling_groups):
+    def __init__(self, all_sprites, plant_group, collision_sprites, bling_groups, game):
         # sprite groups
         self.all_sprites = all_sprites
         # 植物的精灵组
@@ -14,6 +14,7 @@ class SoilLayer:
         # bling的精灵组
         self.bling_groups = bling_groups
 
+        self.game = game
 
         # 耕地的精灵组
         self.soil_sprites = pygame.sprite.Group()
@@ -143,7 +144,8 @@ class SoilLayer:
         # 返回None说明这个格子上并没有种植作物
         return None
 
-
+    def talk(self, target_point):
+        self.game.handle_mouse_click_talk(target_point)
 
 
 

@@ -45,7 +45,7 @@ class ForestGarden:
         self.emotes_group = pygame.sprite.Group()
         self.talk_group = pygame.sprite.Group()
         self.bling_group = pygame.sprite.Group()
-        # self.all_sprites.add(self.emotes_group)
+
         # 碰撞精灵组
         self.collision_sprites = pygame.sprite.Group()
         # 游戏状态 1为界面状态，2为游戏状态, 0为结束状态
@@ -95,7 +95,7 @@ class ForestGarden:
                 trader = Generic(pos=(obj.x, obj.y), surf=pygame.transform.scale(pygame.image.load('asset/objects/robot..png').convert_alpha(), (64, 64)), groups= [self.all_sprites, self.collision_sprites])
 
         # 土地网格初始化New 移动位置
-        self.soil_layer = SoilLayer(self.all_sprites, self.plant_group, self.collision_sprites, self.bling_group)
+        self.soil_layer = SoilLayer(self.all_sprites, self.plant_group, self.collision_sprites, self.bling_group, self)
         # 添加人物#New新添参数
         self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (start.x, start.y), self.all_sprites, self.collision_sprites, self.soil_layer, self.tree_sprites, trader)
         #New 初始道具
@@ -399,6 +399,7 @@ class ForestGarden:
             self.talk_group.add(new_talk)
             # 将Emotes实例赋值给clicked_sprite.emotes
             clicked_sprite.talk.append(new_talk)
+
     def run_Plants(self,current_season, all_sprites):
         for plant in self.plant_group:
             plant.plant_update(current_season, self.all_sprites)
