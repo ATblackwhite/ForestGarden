@@ -8,6 +8,7 @@ from settings import *
 from camera.cameraGroup import CameraGroup
 from sprites.generic import Generic
 from sprites.tree import Tree
+from sprites.map import Map
 from pytmx.util_pygame import load_pygame
 from camera.soilLayer import SoilLayer
 
@@ -65,10 +66,10 @@ class ForestGarden:
 
     def setup(self):
         # 生成地图（简单背景）
-        Generic(
+        map_list = [pygame.image.load(r"asset/map.png").convert_alpha(), pygame.image.load(r"asset/map_winter.png").convert_alpha()]
+        self.map = Map(
             pos=(0, 0),
-            # surf=pygame.image.load('sources/UI/world/ground.png').convert_alpha(),
-            surf=pygame.image.load(r"asset/map.png").convert_alpha(),
+            surf=map_list,
             groups=self.all_sprites,
             z=LAYERS['ground']
         )
@@ -117,12 +118,13 @@ class ForestGarden:
                 #New 实时更新player位置给camera
 
                 runtime =pygame.time.get_ticks() // 1000
-                print(runtime)
-                print('runtime')
+                # print(runtime)
+                # print('runtime')
                 runtimes = int(runtime)
                 # 获取当前季节
                 global current_season
                 current_season = season(runtime)
+                self.map.change(current_season)
                 self.run_Plants(current_season, self.all_sprites)
                 self.player.update_to_camera()
                 self.update_screen()
@@ -416,7 +418,12 @@ class ForestGarden:
             plant.bling_update()
             if plant.tree == 0:
                 plant.plant_havest_update(current_season)
-            plant.death()
+            if plant.death():
+                x, y = plant.pos
+                x = x // TILE_SIZE
+                y = y //  TILE_SIZE
+                self.soil_layer.grid[y][x].remove('P')
+
     def plant_tree(self,plant_type):#生成树
         mouse_x, mouse_y = pygame.mouse.get_pos()
         new_plant = Plant(f'{plant_type}', [self.plant_group, self.all_sprites, self.collision_sprites],

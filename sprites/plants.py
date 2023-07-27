@@ -44,8 +44,8 @@ class Plant(pygame.sprite.Sprite):
 
         # sprite setup
         self.image = pygame.transform.scale(self.frames[self.stage],(192,320))
-        self.y_offset = -16 #if plant_type == 'corn' else -8
-        self.rect = self.image.get_rect(midbottom=pos + pygame.math.Vector2(0, self.y_offset))
+        self.y_offset = -16 + 75 # +75是因为需要修正显示位置，下面的30同理  #if plant_type == 'corn' else -8
+        self.rect = self.image.get_rect(midbottom=pos + pygame.math.Vector2(30, self.y_offset))
         self.z = LAYERS['fruit']
 
 
@@ -126,8 +126,12 @@ class Plant(pygame.sprite.Sprite):
                 for emote in self.emotes:
                     emote.kill()
             self.kill()
+            return True
+        return False
+            
             # 删除该植物实体
             # for emote in self.emotes:
+
     def damage(self):
         if self.life>0:
             self.life -= 500
@@ -218,6 +222,7 @@ class Crop(Plant):
                 self.stage = 5
             elif current_season == 4:
                 self.stage = 3#无果无花
+
         if self.last_stage < self.stage:
             bling = Bling(self.rect.midbottom+pygame.Vector2(50,200),bling_group,'green')
             self.stagevideo.append(bling)
@@ -237,6 +242,7 @@ class Crop(Plant):
             self.harvestable = 0
     def havest_ornot(self):
         return (self.harvestable,self.plant_type)
+
 def update_harvestable(crop,bling_groups):
     harvestable, plant_type = crop.havest_ornot()
     if harvestable == 1:

@@ -101,8 +101,7 @@ class SoilLayer:
         if 'X' in cell and 'P' not in cell:
             # 创建plant
             self.grid[y][x].append('P')
-            new_plant = Plant(f'{plant_type}', [self.plant_group, self.all_sprites, self.collision_sprites], (x * TILE_SIZE + 30, y * TILE_SIZE + 75))
-            self.grid[y][x].append(new_plant)
+            Plant(f'{plant_type}', [self.plant_group, self.all_sprites, self.collision_sprites], (x * TILE_SIZE, y * TILE_SIZE))
             return True
         return False
 
@@ -123,6 +122,7 @@ class SoilLayer:
         x = int(target_point.x // TILE_SIZE)
         y = int(target_point.y // TILE_SIZE)
         cell = self.grid[y][x]
+        print('收获')
         if 'P' in cell:
             for item in self.grid[y][x]:
                 # 确认这个网格上种植了Crop
