@@ -221,8 +221,8 @@ class MainCharacter(pygame.sprite.Sprite):
 
     # New
     def interaction(self):
-        self.interaction_point_x = self.posx + self.width / 2 + self.direct_move[self.direction][0] * self.width * 2
-        self.interaction_point_y = self.posy + self.height / 2 + self.direct_move[self.direction][1] * self.height * 2
+        self.interaction_point_x = self.hitbox.centerx+ self.direct_move[self.direction][0] * self.width * 2
+        self.interaction_point_y = self.hitbox.centery + self.direct_move[self.direction][1] * self.height * 2
         self.interaction_point = pygame.math.Vector2(self.interaction_point_x, self.interaction_point_y)
         if self.equiped_item != None:
             self.equiped_item.item_use(self.interaction_point)
@@ -237,6 +237,12 @@ class MainCharacter(pygame.sprite.Sprite):
             if harvest != None:
                 seed_name = "Fruit_" + harvest
                 self.backpack.player.gainItem(Item(seed_name))
+
+    def talkToPlants(self):
+        self.interaction_point_x = self.hitbox.centerx + self.direct_move[self.direction][0] * self.width * 2
+        self.interaction_point_y = self.hitbox.centery + self.direct_move[self.direction][1] * self.height * 2
+        self.interaction_point = pygame.math.Vector2(self.interaction_point_x, self.interaction_point_y)
+        self.map_grid.talk(self.interaction_point)
 
     def useItemAnimate(self, item_name, duration=200):
         self.item_animating = True
