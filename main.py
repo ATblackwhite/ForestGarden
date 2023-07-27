@@ -66,7 +66,7 @@ class ForestGarden:
 
     def setup(self):
         # 生成地图（简单背景）
-        map_list = [pygame.image.load(r"asset/map.png").convert_alpha(), pygame.image.load(r"asset/map_winter.png").convert_alpha()]
+        map_list = [pygame.image.load('asset/map.png').convert_alpha(), pygame.image.load('asset/blend_start.png').convert_alpha(), pygame.image.load('asset/blend_mid.png').convert_alpha(), pygame.image.load('asset/blend_end.png'), pygame.image.load('asset/map_winter.png')]
         self.map = Map(
             pos=(0, 0),
             surf=map_list,
@@ -158,7 +158,7 @@ class ForestGarden:
             if len(movement) != 0:
                 self.player.move_by_dire(movement[len(movement) - 1])
             # 最高层UI绘制
-# <<<<<<< Updated upstream
+
             if self.game_state == 2:
                 # New 获取物品动画
                 if self.player.gainItemAnimating:
@@ -409,10 +409,12 @@ class ForestGarden:
             plant.bling_update()
             if plant.tree == 0:
                 plant.plant_harvest_update(current_season, self.all_sprites)
+
             if plant.death():
+                # 将土地重新恢复成可种植的样子
                 x, y = plant.pos
                 x = x // TILE_SIZE
-                y = y //  TILE_SIZE
+                y = y // TILE_SIZE
                 self.soil_layer.grid[y][x].remove('P')
                 self.soil_layer.grid[y][x].remove(plant)
 
@@ -433,6 +435,7 @@ class ForestGarden:
         if now_time-starttime>=delay:
             self.if_rain ^= True
             starttime=pygame.time.get_ticks()
+
 def season(runtimes):
     # 规定每个季节的持续时间为10秒
     per_season = 2
