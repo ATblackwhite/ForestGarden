@@ -287,13 +287,9 @@ class ForestGarden:
                         # 获取鼠标点击位置
                         mouse_x, mouse_y = pygame.mouse.get_pos()
                         mouse_pos = pygame.math.Vector2(mouse_x, mouse_y) + self.all_sprites.offset
-                        print(f'鼠标当前位置{mouse_x},{mouse_y}')
                         # 进行碰撞检测，判断鼠标是否与某个Plant实例相交
                         clicked_sprites = [sprite for sprite in self.plant_group if
                                            sprite.rect.collidepoint(mouse_pos)]
-                        print('已进行碰撞检测')
-                        print(f'{clicked_sprites}')
-                        print(f'{self.plant_group}')
                         # if clicked_sprites.life>800:
                         # 调用处理鼠标点击的方法
                         self.handle_mouse_click_happy(mouse_pos)
@@ -342,7 +338,6 @@ class ForestGarden:
                 # 按下O键生成新的'greentree'实例
                 elif event.key == pygame.K_o:
                     self.plant_tree('fruittree')
-                    print('222')
                 #New 增加雨天天气开关
                 elif event.key == pygame.K_r:
 
@@ -370,7 +365,6 @@ class ForestGarden:
 
         if clicked_sprites:
             clicked_sprite = clicked_sprites[0]  # 获取第一个相交的Plant实例
-            print('已经有clicked_sprites')
             # 检查是否已经存在Emotes实例，如果存在，则重新设置属性，否则创建新的Emotes实例
             # if clicked_sprite.emotes is not None:
             #     for emote in clicked_sprite.emotes:
@@ -382,7 +376,6 @@ class ForestGarden:
             else:
                 new_emotes = Emotes(mouse_pos, 'loveu', [self.emotes_group, self.all_sprites])
                 # 将Emotes实例添加到emotes_group中
-            print('已经创建新emotes实例')
             self.emotes_group.add(new_emotes)
                 # 将Emotes实例赋值给clicked_sprite.emotes
             clicked_sprite.emotes.append(new_emotes)
@@ -392,7 +385,6 @@ class ForestGarden:
 
         if clicked_sprites:
             clicked_sprite = clicked_sprites[0]  # 获取第一个相交的Plant实例
-            print('已经有clicked_sprites')
             # 检查是否已经存在Emotes实例，如果存在，则重新设置属性，否则创建新的Emotes实例
             # if clicked_sprite.emotes is not None:
             #     for emote in clicked_sprite.emotes:
@@ -401,7 +393,6 @@ class ForestGarden:
                 # 创建Emotes实例
             new_emotes = Emotes(mouse_pos,'loveu', [self.emotes_group, self.all_sprites])
                 # 将Emotes实例添加到emotes_group中
-            print('已经创建新emotes实例')
             self.emotes_group.add(new_emotes)
                 # 将Emotes实例赋值给clicked_sprite.emotes
             clicked_sprite.emotes.append(new_emotes)
@@ -417,7 +408,7 @@ class ForestGarden:
             plant.emotes_update()
             plant.bling_update()
             if plant.tree == 0:
-                plant.plant_havest_update(current_season)
+                plant.plant_harvest_update(current_season, self.all_sprites)
             if plant.death():
                 x, y = plant.pos
                 x = x // TILE_SIZE
@@ -432,9 +423,6 @@ class ForestGarden:
         # new_emotes = Emotes(groups=[emotes_group, self.all_sprites], pos=new_plant.rect.topright)
         # emotes_group.add(new_emotes)
         # new_plant.emotes = new_emotes
-        print('已生成植物')
-        print(f'植物rect:{new_plant.rect}')
-
 
 
     def plant_rain(self):
@@ -442,9 +430,7 @@ class ForestGarden:
         now_time = pygame.time.get_ticks()
         delay = 5000
         if now_time-starttime>=delay:
-            print('rain2')
             self.if_rain ^= True
-            print('rain')
             starttime=pygame.time.get_ticks()
 def season(runtimes):
     # 规定每个季节的持续时间为10秒
