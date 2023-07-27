@@ -415,6 +415,7 @@ class ForestGarden:
             plant.emotes_update()
             plant.bling_update()
             plant.talk_update()
+            plant.plant_play_sound()
             if plant.tree == 0:
                 plant.plant_harvest_update(current_season, self.all_sprites)
 

@@ -56,6 +56,8 @@ class Plant(pygame.sprite.Sprite):
         # hitbox setup
         self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.8, -self.rect.height * 0.8)
         self.hitbox.bottom = self.rect.bottom
+        self.hitbox.x += 30
+
 
         #表情：
         self.emotes = []
@@ -92,6 +94,11 @@ class Plant(pygame.sprite.Sprite):
         self.seasonword = None
         self.talkword = (f'{self.stageword}')
         self.water = 1
+
+        #
+        self.sound = pygame.mixer.Sound('sources/Plants/music/plant.mp3')
+        self.last_stage = 0
+
     def plant_update(self, current_season, bling_groups):
         # 更新植物的生长状态和图像
         self.growth += self.grow_speed
@@ -129,6 +136,7 @@ class Plant(pygame.sprite.Sprite):
         self.image = self.frames[int(self.stage)]
         # 更新hitbox位置
         self.hitbox.midbottom = self.pos + pygame.math.Vector2(0, self.y_offset)
+        self.hitbox.x += 30
 
     def death(self):
         # 执行植物死亡的相关操作
@@ -189,6 +197,12 @@ class Plant(pygame.sprite.Sprite):
                 self.image = self.stump_image
                 self.rect = self.image.get_rect(midbottom=self.rect.midbottom)
                 self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.9, -self.rect.height * 0.6)
+
+    def plant_play_sound(self):
+        if self.last_stage !=self.stage:
+            self.sound.play()
+            self.last_stage = self.stage
+
 
     def add_emotes(self, pos, groups):
         # 将Emotes实例添加到self.emotes列表中
