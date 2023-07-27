@@ -18,11 +18,11 @@ LAYERS = {
     'rain drops': 10
     }
 PLANT_ATTRIBUTE = {
-    'fruittree': (0.02, 1000, 20),  # (grow_speed, life, stages,heavestseason)#fruittree
-    'greentree': (0.02, 1000, 20),   # (grow_speed, life, stages)#greentree
-    'corn':(0.02,2000,1000,3), #corn
-    'blueberry':(0.02,1000,20,3), #blueberry
-    'tomato':(0.02,1000,20,3)#tomato
+    'fruittree': (0.02, 20000, 20),  # (grow_speed, life, stages,heavestseason)#fruittree
+    'greentree': (0.02, 20000, 20),   # (grow_speed, life, stages)#greentree
+    'corn':(0.02,20000,10,3), #corn
+    'blueberry':(0.02,20000,20,3), #blueberry
+    'tomato':(0.02,20000,20,3)#tomato
 
 
 }
