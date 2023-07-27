@@ -82,33 +82,29 @@ class Plant(pygame.sprite.Sprite):
         self.growth += self.grow_speed
         if self.growth < 1:
             self.stage = 0
-            print('stage0')
-            print(current_season)
+
         elif self.growth < 2:
             self.stage = 1
-            print('s1')
-            print(current_season)
+
         elif self.growth < 3:
             self.stage = 2
-            print('s2')
-            print(current_season)
+
         elif self.growth < 4:
             self.stage = 3
-            print('s3')
-            print(current_season)
+
         elif self.growth>=4:
             if current_season == 1:
                 self.stage = 4
-                print('s4')
+
             elif current_season == 2:
                 self.stage = 5
-                print('s5')
+
             elif current_season == 3:
                 self.stage = 6
-                print('s6')
+
             elif current_season == 4:
                 self.stage = 7
-                print('s7')
+
         if self.last_stage < self.stage:
 
             bling = Bling(self.rect.midbottom+pygame.Vector2(50,200),bling_groups,'green')
@@ -196,43 +192,34 @@ class Crop(Plant):
         self.tree = 0
 
 
-    def plant_update(self,current_season,bling_groups):
+    def plant_update(self,current_season,bling_group):
         # 更新植物的生长状态和图像
         self.growth += self.grow_speed
         if self.growth < 1:
             self.stage = 0
-            print('stage0')
-            print(current_season)
+
         elif self.growth < 2:
             self.stage = 1
-            print('s1')
-            print(current_season)
+
         elif self.growth < 3:
             self.stage = 2
-            print('s2')
-            print(current_season)
+
         elif self.growth < 4:
             self.stage = 3
-            print('s3')
-            print(current_season)
+
         elif self.growth>=4:
             if current_season == 1:
                 self.stage = 5#有花无果
-                print('s4')
             elif current_season == 2:
                 self.stage = 5
-                print('s5')
-            elif current_season == 3 and self.harvestable==1 and self.fruit>=1:
+            elif current_season == 3 and self.fruit>=1:
+                self.stage = 4
+            elif current_season == 3 and( self.harvestable!=1 or self.fruit<1):
                 self.stage = 5
-                print('s6')
-            elif current_season == 3 and self.harvestable!=1 or self.fruit<1:
-                self.stage = 5
-                print('s6')
             elif current_season == 4:
-                self.stage = 4#无果无花
-                print('s7')
+                self.stage = 3#无果无花
         if self.last_stage < self.stage:
-            bling = Bling(self.rect.midbottom+pygame.Vector2(50,200),bling_groups,'green')
+            bling = Bling(self.rect.midbottom+pygame.Vector2(50,200),bling_group,'green')
             self.stagevideo.append(bling)
             self.last_stage = self.stage
 
@@ -240,20 +227,20 @@ class Crop(Plant):
         self.image = self.frames[int(self.stage)]
         # 更新hitbox位置
         self.hitbox.midbottom = self.pos + pygame.math.Vector2(0, self.y_offset)
-    def plant_havest_update(self, current_season):
+    def plant_harvest_update(self, current_season,bling_group):
         # 新增代码：根据生长状态和季节来判断是否可以收获
-        if self.stage == 5  and current_season == 3 and self.growth>100:
+        if self.growth >= 4 and self.life > 100 and self.fruit >= 1 and current_season == 3:
             self.harvestable = 1
-            bling = Bling(self.rect.midbottom + pygame.Vector2(50, 200), self.bling_groups, 'red')
+            bling = Bling(self.rect.midbottom + pygame.Vector2(50, 200),bling_group, 'yellow')
             self.stagevideo.append(bling)
         else:
             self.harvestable = 0
     def havest_ornot(self):
         return (self.harvestable,self.plant_type)
-def update_harvestable(crop):
+def update_harvestable(crop,bling_groups):
     harvestable, plant_type = crop.havest_ornot()
     if harvestable == 1:
-        bling = Bling(crop.rect.midbottom+pygame.Vector2(50,200),crop.bling_groups,'yellow')
+        bling = Bling(crop.rect.midbottom+pygame.Vector2(50,200),bling_groups,'blue')
         crop.stagevideo.append(bling)
         crop.fruit = 0
         crop.harvestable = 0
