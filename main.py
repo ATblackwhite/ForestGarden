@@ -461,7 +461,7 @@ class ForestGarden:
 
 def season(runtimes):
     # 规定每个季节的持续时间为10秒
-    per_season = 100
+    per_season = 5
 
     # 计算当前季节的编号，从1开始，分别代表春天、夏天、秋天和冬天
     cal_season = (runtimes // per_season) % 4 + 1
