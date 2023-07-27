@@ -95,7 +95,7 @@ class ForestGarden:
                 trader = Generic(pos=(obj.x, obj.y), surf=pygame.transform.scale(pygame.image.load('asset/objects/robot..png').convert_alpha(), (64, 64)), groups= [self.all_sprites, self.collision_sprites])
 
         # 土地网格初始化New 移动位置
-        self.soil_layer = SoilLayer(self.all_sprites, self.plant_group, self.collision_sprites, self.bling_group)
+        self.soil_layer = SoilLayer(self.all_sprites, self.plant_group, self.collision_sprites)
         # 添加人物#New新添参数
         self.player = MainCharacter(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, (start.x, start.y), self.all_sprites, self.collision_sprites, self.soil_layer, self.tree_sprites, trader)
         #New 初始道具
@@ -299,18 +299,8 @@ class ForestGarden:
                         #     self.handle_mouse_click_loveu(mouse_pos)
                     elif event.button == 3:  # 鼠标右键点击
                         # 获取鼠标点击位置
-                        mouse_x, mouse_y = pygame.mouse.get_pos()
-                        mouse_pos = pygame.math.Vector2(mouse_x, mouse_y) + self.all_sprites.offset
-                        print(f'鼠标当前位置{mouse_x},{mouse_y}')
-                        # 进行碰撞检测，判断鼠标是否与某个Plant实例相交
-                        clicked_sprites = [sprite for sprite in self.plant_group if
-                                           sprite.rect.collidepoint(mouse_pos)]
-                        # print('talk碰撞检测')
-                        # print(f'{clicked_sprites}')
-                        # print(f'{self.plant_group}')
-                        # if clicked_sprites.life>800:
-                        # 调用处理鼠标点击的方法
-                        self.handle_mouse_click_talk(mouse_pos)
+                        self.talk_to_plant()
+
 
 
             # 键盘按键判定
@@ -346,21 +336,24 @@ class ForestGarden:
                     movement = []
                     self.player.interaction()
 
-                # 按下P键生成新的'fruittree'实例
-                elif event.key == pygame.K_p:
-                    self.plant_tree('fruittree')
-
-                # 按下O键生成新的'greentree'实例
-                elif event.key == pygame.K_o:
-                    self.plant_tree('fruittree')
-
-                elif event.key == pygame.K_l:
-                    self.plant_crop('corn')
+                # # 按下P键生成新的'fruittree'实例
+                # elif event.key == pygame.K_p:
+                #     self.plant_tree('fruittree')
+                #
+                # # 按下O键生成新的'greentree'实例
+                # elif event.key == pygame.K_o:
+                #     self.plant_tree('fruittree')
+                #
+                # elif event.key == pygame.K_l:
+                #     self.plant_crop('corn')
 
                 #New 增加雨天天气开关
                 elif event.key == pygame.K_r:
 
                     self.if_rain = not self.if_rain
+
+                    # self.if_rain ^= True
+
 
 
             elif event.type == pygame.KEYUP:
@@ -401,10 +394,8 @@ class ForestGarden:
 
         if clicked_sprites:
             clicked_sprite = clicked_sprites[0]  # 获取第一个相交的Plant实例
-            print('已经有clicked_sprites')
-            new_talk = Talk(mouse_pos, [self.talk_group, self.all_sprites])
-            # 将Emotes实例添加到emotes_group中
-            print('已经创建新emotes实例')
+            clicked_sprite.relationship += 1
+            new_talk = Talk(mouse_pos, [self.talk_group, self.all_sprites],clicked_sprite,current_season=current_season)
             self.talk_group.add(new_talk)
             # 将Emotes实例赋值给clicked_sprite.emotes
             clicked_sprite.talk.append(new_talk)
@@ -444,13 +435,23 @@ class ForestGarden:
         new_crop = Crop(f'{plant_type}', [self.plant_group, self.all_sprites, self.collision_sprites],
                           pygame.math.Vector2(mouse_x, mouse_y) + self.all_sprites.offset)
         self.plant_group.add(new_crop)
-        print('已生成植物')
-        print(f'作物rect:{new_crop.rect}')
 
 
+    def talk_to_plant(self):
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        mouse_pos = pygame.math.Vector2(mouse_x, mouse_y) + self.all_sprites.offset
+        clicked_sprites = [sprite for sprite in self.plant_group if
+                           sprite.rect.collidepoint(mouse_pos)]
+        self.handle_mouse_click_talk(mouse_pos)
+
+# def talk_to_plant():
+#     mouse_x, mouse_y = pygame.mouse.get_pos()
+#     mouse_pos = pygame.math.Vector2(mouse_x, mouse_y) + game_instance.all_sprites.offset
+#     clicked_sprites = [sprite for sprite in game_instance.plant_group if sprite.rect.collidepoint(mouse_pos)]
+#     game_instance.handle_mouse_click_talk(mouse_pos)
 def season(runtimes):
     # 规定每个季节的持续时间为10秒
-    per_season = 5
+    per_season = 10
 
     # 计算当前季节的编号，从1开始，分别代表春天、夏天、秋天和冬天
     cal_season = (runtimes // per_season) % 4 + 1
