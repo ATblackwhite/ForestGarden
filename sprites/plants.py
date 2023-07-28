@@ -95,8 +95,7 @@ class Plant(pygame.sprite.Sprite):
         self.talkword = (f'{self.stageword}')
         self.water = 1
 
-        #
-        self.sound = pygame.mixer.Sound('sources/Plants/music/plant.mp3')
+
         self.last_stage = 0
 
     def plant_update(self, current_season, bling_groups):
@@ -197,11 +196,6 @@ class Plant(pygame.sprite.Sprite):
                 self.image = self.stump_image
                 self.rect = self.image.get_rect(midbottom=self.rect.midbottom)
                 self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.9, -self.rect.height * 0.6)
-
-    def plant_play_sound(self):
-        if self.last_stage !=self.stage:
-            self.sound.play()
-            self.last_stage = self.stage
 
 
     def add_emotes(self, pos, groups):

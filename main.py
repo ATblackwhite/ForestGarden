@@ -397,7 +397,7 @@ class ForestGarden:
 
         if clicked_sprites:
             clicked_sprite = clicked_sprites[0]  # 获取第一个相交的Plant实例
-            clicked_sprite.relationship += 1
+            clicked_sprite.relationship += 0.01
             new_talk = Talk(mouse_pos, [self.talk_group, self.all_sprites],clicked_sprite,current_season=current_season)
             self.talk_group.add(new_talk)
             # 将Emotes实例赋值给clicked_sprite.emotes
@@ -415,7 +415,6 @@ class ForestGarden:
             plant.emotes_update()
             plant.bling_update()
             plant.talk_update()
-            plant.plant_play_sound()
             if plant.tree == 0:
                 plant.plant_harvest_update(current_season, self.all_sprites)
 

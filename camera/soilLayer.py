@@ -83,13 +83,15 @@ class SoilLayer:
                     bling = Bling(item.rect.midbottom + pygame.Vector2(50, 200), [self.bling_groups, self.all_sprites],
                                   'blue')
                     item.stagevideo.append(bling)
+                    item.water = 1.1
                     item.relationship += 1
             if 'W' not in cell:
                 self.grid[y][x].append('W')
                 self.grid[y][x].append(WaterTile(
                     pos=(x * TILE_SIZE, y * TILE_SIZE),
                     surf=pygame.image.load(r"asset\objects\outdoor_64_682.png").convert_alpha(),
-                    groups=[self.all_sprites, self.water_sprites]
+                    groups=[self.all_sprites, self.water_sprites],
+                    soil_layer=self
                 ))
         # print('water')
 
@@ -156,9 +158,28 @@ class SoilTile(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=pos)
         self.z = LAYERS['soil']
 
+
+
+
 class WaterTile(pygame.sprite.Sprite):
-    def __init__(self, pos, surf, groups):
+    def __init__(self, pos, surf, groups, soil_layer):
         super().__init__(groups)
+        self.pos = pos
         self.image = surf
         self.rect = self.image.get_rect(topleft=pos)
         self.z = LAYERS['soil water']
+        self.start_time = pygame.time.get_ticks()
+        self.soil_layer = soil_layer
+
+    def update(self):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.start_time >= 5000:
+            x, y = self.pos
+            x = x // TILE_SIZE
+            y = y // TILE_SIZE
+            self.soil_layer.grid[y][x].remove(self)
+            self.soil_layer.grid[y][x].remove('W')
+            for item in self.soil_layer.grid[y][x]:
+                if isinstance(item, Plant):
+                    item.water = 1
+            self.kill()
